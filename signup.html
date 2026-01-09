@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Borongan Delivery Hub | Sign Up</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0d2a3a, #1b4f72);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .signup-box {
+      background-color: #0a1f2e;
+      padding: 30px 35px;
+      border-radius: 12px;
+      width: 340px;
+      box-shadow: 0 4px 15px rgba(0,170,255,0.3);
+    }
+
+    .signup-box h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: 600;
+      font-size: 24px;
+    }
+
+    .input-group {
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-group label {
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #aad4ff;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="url"] {
+      padding: 10px 12px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: none;
+      background-color: #163545;
+      color: #ddd;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="url"]:focus {
+      background-color: #1f4967;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #00aaff, #0077cc);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #0077cc, #00aaff);
+    }
+
+    .login-btn {
+      margin-top: 15px;
+      background: #0a1f2e;
+      border: 2px solid #00aaff;
+      color: #00aaff;
+      font-weight: 600;
+    }
+
+    .login-btn:hover {
+      background: #0077cc;
+      color: white;
+      border-color: #0077cc;
+    }
+
+    .error {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #ff8080;
+      text-align: center;
+      min-height: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-box">
+    <h2>Create Account</h2>
+
+    <div class="input-group">
+      <label for="name">Full Name</label>
+      <input id="name" type="text" placeholder="Your full name" autocomplete="name" />
+    </div>
+
+    <div class="input-group">
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="Your email address" autocomplete="email" />
+    </div>
+
+    <div class="input-group">
+      <label for="messenger">Messenger Profile Link</label>
+      <input id="messenger" type="url" placeholder="https://..." />
+    </div>
+
+    <div class="input-group">
+      <label for="contact">Contact Number</label>
+      <input id="contact" type="text" placeholder="Phone number" autocomplete="tel" />
+    </div>
+
+    <div class="input-group">
+      <label for="address">Delivery Address</label>
+      <input id="address" type="text" placeholder="Your delivery address" autocomplete="street-address" />
+    </div>
+
+    <div class="input-group">
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="Create a password" autocomplete="new-password" />
+    </div>
+
+    <button onclick="signup()">Sign Up</button>
+
+    <button class="login-btn" onclick="location.href='login.html'">Already have an account? Login</button>
+
+    <div id="error" class="error"></div>
+  </div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSAyxLNF_H62VuaL-WbjZvTvOvo13fmW8BA4CxuliOPjaGdBTOAJeMSwNhXyhrzf8e/exec";
+
+  function signup() {
+    document.getElementById("error").textContent = "";
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const messenger = document.getElementById("messenger").value.trim();
+    const contact = document.getElementById("contact").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!name || !email || !messenger || !contact || !address || !password) {
+      document.getElementById("error").textContent = "Please fill in all fields.";
+      return;
+    }
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "signup",
+        name,
+        email,
+        messenger,
+        contact,
+        address,
+        password
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert("Signup successful! Please log in.");
+        window.location.href = "login.html";
+      } else {
+        document.getElementById("error").textContent = data.message;
+      }
+    })
+    .catch(() => {
+      document.getElementById("error").textContent = "Connection error";
+    });
+  }
+</script>
+</body>
+</html>
