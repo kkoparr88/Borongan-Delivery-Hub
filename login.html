@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Borongan Delivery Hub | Login</title>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
@@ -58,11 +59,9 @@
       border: none;
       background-color: #163545;
       color: #ddd;
-      transition: background-color 0.3s ease;
     }
 
-    input[type="email"]:focus,
-    input[type="password"]:focus {
+    input:focus {
       background-color: #1f4967;
       outline: none;
     }
@@ -77,12 +76,7 @@
       font-weight: 600;
       font-size: 16px;
       cursor: pointer;
-      transition: background 0.3s ease;
       margin-top: 10px;
-    }
-
-    button:hover {
-      background: linear-gradient(90deg, #0077cc, #00aaff);
     }
 
     .signup-btn {
@@ -90,13 +84,6 @@
       background: #0a1f2e;
       border: 2px solid #00aaff;
       color: #00aaff;
-      font-weight: 600;
-    }
-
-    .signup-btn:hover {
-      background: #0077cc;
-      color: white;
-      border-color: #0077cc;
     }
 
     .error {
@@ -108,67 +95,70 @@
     }
   </style>
 </head>
+
 <body>
   <div class="login-box">
     <h2>Customer Login</h2>
 
     <div class="input-group">
-      <label for="email">Email</label>
-      <input id="email" type="email" placeholder="Enter your email" autocomplete="username" />
+      <label>Email</label>
+      <input id="email" type="email" placeholder="Enter your email" />
     </div>
 
     <div class="input-group">
-      <label for="password">Password</label>
-      <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password" />
+      <label>Password</label>
+      <input id="password" type="password" placeholder="Enter your password" />
     </div>
 
     <button onclick="login()">Login</button>
-
     <button class="signup-btn" onclick="location.href='signup.html'">Sign Up</button>
 
     <div id="error" class="error"></div>
   </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNjZiCQuOFTA_5mUrPw95ddeGl7NIcDbjxlTgn95C7RWuC7bvEwS8AZMKkQgIpWfsw/exec";
+/* ===============================
+   PASTE YOUR GOOGLE SCRIPT URL BELOW
+   =============================== */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzKNZykX5pLbNdjkTZu1brXY8LcovIhxATQpjlJpmEwOoWS0kflxGAhrHHsmFINzkxT/exec";
 
-  function login() {
-    document.getElementById("error").textContent = "";
+/* ===============================
+   LOGIN FUNCTION
+   =============================== */
+function login() {
+  document.getElementById("error").textContent = "";
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-    if (!email || !password) {
-      document.getElementById("error").textContent = "Please enter both email and password.";
-      return;
-    }
-
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "login",
-        email,
-        password
-      }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        localStorage.setItem("customer", JSON.stringify(data.customer));
-        window.location.href = "dashboard.html";
-      } else {
-        document.getElementById("error").textContent = data.message;
-      }
-    })
-    .catch(() => {
-      document.getElementById("error").textContent = "Connection error";
-    });
+  if (!email || !password) {
+    document.getElementById("error").textContent = "Please enter both email and password.";
+    return;
   }
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "login",
+      email: email,
+      password: password
+    })
+  })
+  .then(res => res.text())
+  .then(text => {
+    const data = JSON.parse(text);
+
+    if (data.success) {
+      localStorage.setItem("customer", JSON.stringify(data.customer));
+      window.location.href = "dashboard.html";
+    } else {
+      document.getElementById("error").textContent = data.message;
+    }
+  })
+  .catch(err => {
+    document.getElementById("error").textContent = err.toString();
+  });
+}
 </script>
 </body>
 </html>
-
-
