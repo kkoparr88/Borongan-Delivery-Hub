@@ -6,9 +6,16 @@
 <title>Borongan Delivery Hub</title>
 
 <style>
-body {
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: Poppins, Arial, sans-serif;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
   background: linear-gradient(135deg, #0d2a3a, #1b4f72);
   color: #fff;
   min-height: 100vh;
@@ -18,19 +25,31 @@ body {
   padding: 20px;
 }
 
+h1 {
+  margin-bottom: 10px;
+}
+
+p {
+  margin-bottom: 20px;
+}
+
 button {
-  padding: 12px 16px;
-  margin-top: 15px;
+  padding: 12px 18px;
   border: none;
   border-radius: 8px;
-  background: #0077cc;
+  background: linear-gradient(90deg, #00aaff, #0077cc);
   color: #fff;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
 }
 
-button:active {
-  opacity: 0.8;
+button:hover {
+  opacity: 0.9;
+}
+
+.logout {
+  background: #aa3333;
 }
 </style>
 </head>
@@ -39,10 +58,17 @@ button:active {
 
 <div class="container">
   <h1 id="welcome">Loading…</h1>
-  <button id="logoutBtn">Logout</button>
+  <p id="emailInfo"></p>
+
+  <button class="logout" id="logoutBtn">Logout</button>
 </div>
 
 <script>
+/*
+  ===============================
+  PAGE PROTECTION & INITIALIZATION
+  ===============================
+*/
 document.addEventListener("DOMContentLoaded", () => {
   let customer;
 
@@ -51,24 +77,35 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!raw) throw new Error("No session");
 
     customer = JSON.parse(raw);
-    if (!customer || !customer.name) throw new Error("Invalid session");
-
+    if (!customer || !customer.name) {
+      throw new Error("Invalid session");
+    }
   } catch (e) {
-    // Redirect safely if session is bad
+    // No valid login → go back to login page
     window.location.replace("login.html");
     return;
   }
 
-  // SAFE DOM ACCESS
+  // Populate UI safely
   document.getElementById("welcome").textContent =
     "Welcome, " + customer.name;
 
-  // SAFE EVENT BINDING
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.removeItem("customer");
-    window.location.replace("login.html");
-  });
+  document.getElementById("emailInfo").textContent =
+    "Email: " + (customer.email || "");
+
+  // Bind logout safely
+  document.getElementById("logoutBtn").addEventListener("click", logout);
 });
+
+/*
+  ===============================
+  LOGOUT
+  ===============================
+*/
+function logout() {
+  localStorage.removeItem("customer");
+  window.location.replace("login.html");
+}
 </script>
 
 </body>
