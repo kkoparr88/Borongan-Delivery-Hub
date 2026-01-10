@@ -17,12 +17,12 @@
 
 body {
   background: linear-gradient(135deg, #0d2a3a, #1b4f72);
-  min-height: 100vh;        /* FIX mobile scroll */
+  min-height: 100vh;          /* FIX mobile viewport */
   display: flex;
   justify-content: center;
   align-items: center;
   color: #fff;
-  overflow-y: auto;         /* FIX mobile scroll */
+  overflow-y: auto;           /* ENABLE mobile scroll */
 }
 
 .login-box {
@@ -119,14 +119,21 @@ button {
 </div>
 
 <script>
-/* ===============================
-   GOOGLE APPS SCRIPT URL
-   =============================== */
+/* =========================================
+   PASTE YOUR GOOGLE APPS SCRIPT /exec URL
+   ========================================= */
 const SCRIPT_URL = "PASTE YOUR /exec URL HERE";
 
-/* ===============================
+/* =========================================
+   AUTO-REDIRECT IF ALREADY LOGGED IN
+   ========================================= */
+if (localStorage.getItem("customer")) {
+  window.location.replace("./");
+}
+
+/* =========================================
    LOGIN FUNCTION
-   =============================== */
+   ========================================= */
 function login() {
   const errorBox = document.getElementById("error");
   errorBox.textContent = "";
@@ -160,9 +167,8 @@ function login() {
     if (data.success) {
       localStorage.setItem("customer", JSON.stringify(data.customer));
 
-      /* ✅ DASHBOARD IS index.html */
-      /* ✅ replace() fixes back-button bug */
-      window.location.replace("index.html");
+      /* ✅ CORRECT REDIRECT FOR GITHUB PAGES PROJECT SITE */
+      window.location.replace("./");
     } else {
       errorBox.textContent = data.message || "Login failed.";
     }
@@ -170,11 +176,6 @@ function login() {
   .catch(() => {
     errorBox.textContent = "Network error. Please try again.";
   });
-}
-
-/* OPTIONAL: auto-redirect if already logged in */
-if (localStorage.getItem("customer")) {
-  window.location.replace("index.html");
 }
 </script>
 
