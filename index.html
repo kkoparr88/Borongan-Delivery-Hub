@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Borongan Delivery Hub</title>
+<title>Borongan Delivery Hub | Dashboard</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
@@ -21,15 +21,42 @@ body {
   min-height: 100vh;
 }
 
-.container {
+/* LAYOUT */
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 300px;
+  background-color: #0a1f2e;
   padding: 20px;
+  overflow-y: auto;
 }
 
-h1 {
+.sidebar h2 {
+  margin-bottom: 15px;
+  border-bottom: 2px solid #00aaff;
+  padding-bottom: 5px;
+}
+
+.sidebar p {
   margin-bottom: 10px;
+  font-size: 14px;
 }
 
-p {
+/* MAIN */
+.main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.card {
+  background: linear-gradient(90deg, #0f354f, #16629d);
+  padding: 25px;
+  border-radius: 12px;
   margin-bottom: 20px;
 }
 
@@ -38,37 +65,65 @@ button {
   border: none;
   border-radius: 8px;
   background: linear-gradient(90deg, #00aaff, #0077cc);
-  color: #fff;
-  font-size: 15px;
+  color: white;
   font-weight: 600;
   cursor: pointer;
 }
 
-button:hover {
-  opacity: 0.9;
-}
-
 .logout {
   background: #aa3333;
+  margin-top: 20px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h1 id="welcome">Loading…</h1>
-  <p id="emailInfo"></p>
+<div class="app">
 
-  <button class="logout" id="logoutBtn">Logout</button>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>Customer</h2>
+    <p><strong id="name"></strong></p>
+    <p id="email"></p>
+
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+    <div class="card">
+      <h1>Welcome to Borongan Delivery Hub</h1>
+      <p>This is your customer dashboard.</p>
+    </div>
+
+    <div class="card">
+      <h3>Next Steps</h3>
+      <ul>
+        <li>Add order form</li>
+        <li>Submit orders to Google Sheets</li>
+        <li>Send orders to riders</li>
+      </ul>
+    </div>
+  </div>
+
 </div>
 
 <script>
-/*
-  ===============================
-  PAGE PROTECTION & INITIALIZATION
-  ===============================
-*/
+/* ===============================
+   SESSION CHECK
+   =============================== */
 document.addEventListener("DOMContentLoaded", () => {
   let customer;
 
@@ -77,31 +132,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!raw) throw new Error("No session");
 
     customer = JSON.parse(raw);
-    if (!customer || !customer.name) {
-      throw new Error("Invalid session");
-    }
-  } catch (e) {
-    // No valid login → go back to login page
+    if (!customer || !customer.name) throw new Error("Invalid session");
+  } catch {
     window.location.replace("login.html");
     return;
   }
 
-  // Populate UI safely
-  document.getElementById("welcome").textContent =
-    "Welcome, " + customer.name;
-
-  document.getElementById("emailInfo").textContent =
-    "Email: " + (customer.email || "");
-
-  // Bind logout safely
-  document.getElementById("logoutBtn").addEventListener("click", logout);
+  // Populate UI
+  document.getElementById("name").textContent = customer.name;
+  document.getElementById("email").textContent = customer.email;
 });
 
-/*
-  ===============================
-  LOGOUT
-  ===============================
-*/
+/* ===============================
+   LOGOUT
+   =============================== */
 function logout() {
   localStorage.removeItem("customer");
   window.location.replace("login.html");
