@@ -51,7 +51,8 @@ body {
 }
 
 .sidebar input,
-.sidebar textarea {
+.sidebar textarea,
+.sidebar select {
   width: 100%;
   padding: 8px 10px;
   margin-top: 5px;
@@ -61,6 +62,22 @@ body {
   color: #ddd;
 }
 
+/* Qty + UoM */
+.qty-row {
+  display: flex;
+  gap: 10px;
+}
+
+.qty-row input {
+  width: 70px;
+  text-align: center;
+}
+
+.qty-row select {
+  flex: 1;
+}
+
+/* Buttons */
 .sidebar button {
   margin-top: 15px;
   background: linear-gradient(90deg, #00aaff, #0077cc);
@@ -101,10 +118,11 @@ table {
   table-layout: fixed;
 }
 
-col.col-item { width: 55%; }
-col.col-qty { width: 8%; }
-col.col-source { width: 25%; }
-col.col-del { width: 7%; }
+col.col-item { width: 48%; }
+col.col-qty  { width: 8%; }
+col.col-uom  { width: 10%; }
+col.col-src  { width: 24%; }
+col.col-del  { width: 10%; }
 
 th, td {
   padding: 14px;
@@ -116,26 +134,12 @@ th {
   background-color: #003a65;
 }
 
-.col-item {
-  text-align: left;
-  word-wrap: break-word;
-  white-space: normal;
-}
+.col-item { text-align: left; word-wrap: break-word; }
+.col-qty  { text-align: center; }
+.col-uom  { text-align: center; }
+.col-src  { text-align: left; word-wrap: break-word; }
+.col-del  { text-align: center; }
 
-.col-qty {
-  text-align: center;
-}
-
-.col-source {
-  text-align: left;
-  word-wrap: break-word;
-}
-
-.col-del {
-  text-align: center;
-}
-
-/* Delete button */
 .del-btn {
   background: none;
   border: none;
@@ -143,10 +147,6 @@ th {
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
-}
-
-.del-btn:hover {
-  color: #ff0000;
 }
 
 /* ===== INFO ===== */
@@ -219,7 +219,16 @@ th {
     <textarea id="item"></textarea>
 
     <label>Quantity</label>
-    <input type="number" id="qty" min="1">
+    <div class="qty-row">
+      <input type="number" id="qty" min="1" value="1">
+      <select id="uom">
+        <option value="pcs" selected>pcs</option>
+        <option value="order">order</option>
+        <option value="kg">kg</option>
+        <option value="ltr">ltr</option>
+        <option value="others">others</option>
+      </select>
+    </div>
 
     <label>Source</label>
     <input id="source">
@@ -238,14 +247,16 @@ th {
       <colgroup>
         <col class="col-item">
         <col class="col-qty">
-        <col class="col-source">
+        <col class="col-uom">
+        <col class="col-src">
         <col class="col-del">
       </colgroup>
       <thead>
         <tr>
           <th class="col-item">Item</th>
           <th class="col-qty">Qty</th>
-          <th class="col-source">Source</th>
+          <th class="col-uom">UoM</th>
+          <th class="col-src">Source</th>
           <th class="col-del"></th>
         </tr>
       </thead>
@@ -297,23 +308,26 @@ let orders = [];
 function addOrder() {
   const itemEl = document.getElementById("item");
   const qtyEl = document.getElementById("qty");
-  const sourceEl = document.getElementById("source");
+  const uomEl = document.getElementById("uom");
+  const srcEl = document.getElementById("source");
 
   const item = itemEl.value.trim();
   const qty = qtyEl.value;
-  const source = sourceEl.value.trim();
+  const uom = uomEl.value;
+  const source = srcEl.value.trim();
 
   if (!item || !qty || !source) {
     alert("Fill all fields");
     return;
   }
 
-  orders.push({ item, qty, source });
+  orders.push({ item, qty, uom, source });
   renderOrders();
 
   itemEl.value = "";
-  qtyEl.value = "";
-  sourceEl.value = "";
+  qtyEl.value = 1;
+  uomEl.value = "pcs";
+  srcEl.value = "";
 
   itemEl.focus();
 }
@@ -327,7 +341,8 @@ function renderOrders() {
       <tr>
         <td class="col-item">${o.item}</td>
         <td class="col-qty">${o.qty}</td>
-        <td class="col-source">${o.source}</td>
+        <td class="col-uom">${o.uom}</td>
+        <td class="col-src">${o.source}</td>
         <td class="col-del">
           <button class="del-btn" onclick="removeOrder(${index})">✖</button>
         </td>
