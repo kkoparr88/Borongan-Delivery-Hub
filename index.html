@@ -21,13 +21,13 @@ body {
   min-height: 100vh;
 }
 
-/* LAYOUT */
+/* ===== LAYOUT ===== */
 .app {
   display: flex;
   min-height: 100vh;
 }
 
-/* SIDEBAR */
+/* ===== SIDEBAR ===== */
 .sidebar {
   background-color: #0a1f2e;
   width: 320px;
@@ -78,7 +78,7 @@ body {
   background: #aa3333;
 }
 
-/* MAIN */
+/* ===== MAIN ===== */
 .main {
   flex: 1;
   padding: 30px;
@@ -92,22 +92,40 @@ body {
   margin-bottom: 25px;
 }
 
+/* ===== TABLE ===== */
 table {
   width: 100%;
   border-collapse: collapse;
   background-color: #0a1f2e;
   border-radius: 8px;
+  table-layout: fixed; /* 🔑 forces alignment */
 }
 
 th, td {
   padding: 14px;
   border-bottom: 1px solid #004d87;
+  word-wrap: break-word;
 }
 
 th {
   background-color: #003a65;
 }
 
+/* Column alignment */
+th.col-item, td.col-item {
+  text-align: left;
+}
+
+th.col-qty, td.col-qty {
+  text-align: center;
+  width: 80px;
+}
+
+th.col-source, td.col-source {
+  text-align: left;
+}
+
+/* ===== INFO ===== */
 .info-frame {
   display: flex;
   justify-content: space-between;
@@ -133,7 +151,7 @@ th {
   cursor: pointer;
 }
 
-/* MOBILE */
+/* ===== MOBILE ===== */
 @media (max-width: 768px) {
   .app {
     flex-direction: column;
@@ -195,9 +213,9 @@ th {
     <table>
       <thead>
         <tr>
-          <th>Item</th>
-          <th>Qty</th>
-          <th>Source</th>
+          <th class="col-item">Item</th>
+          <th class="col-qty">Qty</th>
+          <th class="col-source">Source</th>
         </tr>
       </thead>
       <tbody id="orderTable"></tbody>
@@ -216,9 +234,7 @@ th {
 </div>
 
 <script>
-/* ===============================
-   SESSION + INITIALIZATION
-   =============================== */
+/* ===== SESSION INIT ===== */
 document.addEventListener("DOMContentLoaded", () => {
   let customer;
 
@@ -233,7 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Populate fields safely
   document.getElementById("name").value = customer.name || "";
   document.getElementById("contact").value = customer.contact || "";
   document.getElementById("messenger").value = customer.messenger || "";
@@ -242,13 +257,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("infoName").textContent = customer.name || "";
   document.getElementById("infoLocation").textContent = customer.address || "";
 
-  // ✅ SET FOCUS TO ITEM FIELD ON LOAD
+  // Initial focus
   document.getElementById("item").focus();
 });
 
-/* ===============================
-   ORDER LOGIC
-   =============================== */
+/* ===== ORDER LOGIC ===== */
 let orders = [];
 
 function addOrder() {
@@ -271,6 +284,9 @@ function addOrder() {
   itemEl.value = "";
   qtyEl.value = "";
   sourceEl.value = "";
+
+  // ✅ Always return focus to Item
+  itemEl.focus();
 }
 
 function renderOrders() {
@@ -280,9 +296,9 @@ function renderOrders() {
   orders.forEach(o => {
     table.innerHTML += `
       <tr>
-        <td>${o.item}</td>
-        <td>${o.qty}</td>
-        <td>${o.source}</td>
+        <td class="col-item">${o.item}</td>
+        <td class="col-qty">${o.qty}</td>
+        <td class="col-source">${o.source}</td>
       </tr>`;
   });
 }
@@ -297,9 +313,6 @@ function sendOrder() {
   renderOrders();
 }
 
-/* ===============================
-   LOGOUT
-   =============================== */
 function logout() {
   localStorage.removeItem("customer");
   window.location.replace("login.html");
@@ -308,4 +321,3 @@ function logout() {
 
 </body>
 </html>
-
