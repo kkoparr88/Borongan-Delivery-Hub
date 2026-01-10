@@ -92,37 +92,43 @@ body {
   margin-bottom: 25px;
 }
 
-/* ===== TABLE ===== */
+/* ===== TABLE (FIXED ALIGNMENT) ===== */
 table {
   width: 100%;
   border-collapse: collapse;
   background-color: #0a1f2e;
   border-radius: 8px;
-  table-layout: fixed; /* 🔑 forces alignment */
+  table-layout: fixed;
 }
+
+col.col-item { width: 65%; }
+col.col-qty { width: 10%; }
+col.col-source { width: 25%; }
 
 th, td {
   padding: 14px;
   border-bottom: 1px solid #004d87;
-  word-wrap: break-word;
+  vertical-align: top;
 }
 
 th {
   background-color: #003a65;
 }
 
-/* Column alignment */
-th.col-item, td.col-item {
+.col-item {
   text-align: left;
+  word-wrap: break-word;
+  white-space: normal;
 }
 
-th.col-qty, td.col-qty {
+.col-qty {
   text-align: center;
-  width: 80px;
 }
 
-th.col-source, td.col-source {
+.col-source {
   text-align: left;
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 /* ===== INFO ===== */
@@ -211,6 +217,11 @@ th.col-source, td.col-source {
     </div>
 
     <table>
+      <colgroup>
+        <col class="col-item">
+        <col class="col-qty">
+        <col class="col-source">
+      </colgroup>
       <thead>
         <tr>
           <th class="col-item">Item</th>
@@ -257,7 +268,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("infoName").textContent = customer.name || "";
   document.getElementById("infoLocation").textContent = customer.address || "";
 
-  // Initial focus
   document.getElementById("item").focus();
 });
 
@@ -285,7 +295,6 @@ function addOrder() {
   qtyEl.value = "";
   sourceEl.value = "";
 
-  // ✅ Always return focus to Item
   itemEl.focus();
 }
 
