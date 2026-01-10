@@ -3,76 +3,137 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Borongan Delivery Hub | Dashboard</title>
+<title>Borongan Delivery Hub</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
 
 body {
   background: linear-gradient(135deg, #0d2a3a, #1b4f72);
-  color: #fff;
+  color: #eee;
   min-height: 100vh;
 }
 
-/* ===== LAYOUT ===== */
+/* LAYOUT */
 .app {
   display: flex;
   min-height: 100vh;
 }
 
-/* ===== SIDEBAR ===== */
+/* SIDEBAR */
 .sidebar {
-  width: 280px;                 /* FIXED width */
-  min-width: 280px;
-  background-color: #081a27;
-  padding: 20px;
+  background-color: #0a1f2e;
+  width: 320px;
+  min-width: 320px;
+  padding: 20px 25px;
+  overflow-y: auto;
   border-right: 2px solid #00aaff;
 }
 
 .sidebar h2 {
+  font-size: 20px;
   margin-bottom: 15px;
-  padding-bottom: 5px;
   border-bottom: 2px solid #00aaff;
+  padding-bottom: 5px;
 }
 
-.sidebar p {
-  margin-bottom: 10px;
+.sidebar label {
   font-size: 14px;
+  margin-top: 10px;
+  display: block;
+}
+
+.sidebar input,
+.sidebar textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: none;
+  background-color: #163545;
+  color: #ddd;
+}
+
+.sidebar button {
+  margin-top: 15px;
+  background: linear-gradient(90deg, #00aaff, #0077cc);
+  border: none;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 0;
+  width: 100%;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .logout {
   background: #aa3333;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 20px;
 }
 
-/* ===== MAIN ===== */
+/* MAIN */
 .main {
   flex: 1;
   padding: 30px;
   overflow-y: auto;
 }
 
-.card {
+.hero {
   background: linear-gradient(90deg, #0f354f, #16629d);
-  padding: 25px;
+  padding: 30px;
   border-radius: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
-/* ===== MOBILE ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #0a1f2e;
+  border-radius: 8px;
+}
+
+th, td {
+  padding: 14px;
+  border-bottom: 1px solid #004d87;
+}
+
+th {
+  background-color: #003a65;
+}
+
+.info-frame {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #0a1f2e;
+  border-radius: 8px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.action-buttons button {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #00aaff, #0077cc);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* MOBILE */
 @media (max-width: 768px) {
   .app {
     flex-direction: column;
@@ -94,34 +155,70 @@ body {
 
   <!-- SIDEBAR -->
   <div class="sidebar">
-    <h2>Customer</h2>
-    <p><strong id="name"></strong></p>
-    <p id="email"></p>
+    <h2>Customer Details</h2>
+
+    <label>Name</label>
+    <input id="name" disabled>
+
+    <label>Contact Number</label>
+    <input id="contact" disabled>
+
+    <label>Messenger Profile</label>
+    <input id="messenger" disabled>
+
+    <label>Delivery Address</label>
+    <input id="location" disabled>
 
     <button class="logout" onclick="logout()">Logout</button>
+
+    <h2 style="margin-top:30px">Order Details</h2>
+
+    <label>Item</label>
+    <textarea id="item"></textarea>
+
+    <label>Quantity</label>
+    <input type="number" id="qty" min="1">
+
+    <label>Source</label>
+    <input id="source">
+
+    <button onclick="addOrder()">Add Order</button>
   </div>
 
   <!-- MAIN -->
   <div class="main">
-    <div class="card">
-      <h1>Welcome to Borongan Delivery Hub</h1>
-      <p>This is your customer dashboard.</p>
+    <div class="hero">
+      <h1>Borongan Delivery Hub 🚚</h1>
+      <p>Customer Dashboard</p>
     </div>
 
-    <div class="card">
-      <h3>Next Steps</h3>
-      <ul>
-        <li>Add order form</li>
-        <li>Submit orders to Google Sheets</li>
-        <li>Send orders to riders</li>
-      </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody id="orderTable"></tbody>
+    </table>
+
+    <div class="info-frame">
+      <div><strong>Customer:</strong> <span id="infoName"></span></div>
+      <div><strong>Address:</strong> <span id="infoLocation"></span></div>
+    </div>
+
+    <div class="action-buttons">
+      <button onclick="confirmOrder()">Confirm</button>
+      <button onclick="sendOrder()">Send to Rider</button>
     </div>
   </div>
-
 </div>
 
 <script>
-/* ===== SESSION CHECK ===== */
+/* ===============================
+   SESSION + INITIALIZATION
+   =============================== */
 document.addEventListener("DOMContentLoaded", () => {
   let customer;
 
@@ -136,11 +233,70 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  document.getElementById("name").textContent = customer.name;
-  document.getElementById("email").textContent = customer.email;
+  // Populate fields safely
+  document.getElementById("name").value = customer.name || "";
+  document.getElementById("contact").value = customer.contact || "";
+  document.getElementById("messenger").value = customer.messenger || "";
+  document.getElementById("location").value = customer.address || "";
+
+  document.getElementById("infoName").textContent = customer.name || "";
+  document.getElementById("infoLocation").textContent = customer.address || "";
 });
 
-/* ===== LOGOUT ===== */
+/* ===============================
+   ORDER LOGIC
+   =============================== */
+let orders = [];
+
+function addOrder() {
+  const itemEl = document.getElementById("item");
+  const qtyEl = document.getElementById("qty");
+  const sourceEl = document.getElementById("source");
+
+  const item = itemEl.value.trim();
+  const qty = qtyEl.value;
+  const source = sourceEl.value.trim();
+
+  if (!item || !qty || !source) {
+    alert("Fill all fields");
+    return;
+  }
+
+  orders.push({ item, qty, source });
+  renderOrders();
+
+  itemEl.value = "";
+  qtyEl.value = "";
+  sourceEl.value = "";
+}
+
+function renderOrders() {
+  const table = document.getElementById("orderTable");
+  table.innerHTML = "";
+
+  orders.forEach(o => {
+    table.innerHTML += `
+      <tr>
+        <td>${o.item}</td>
+        <td>${o.qty}</td>
+        <td>${o.source}</td>
+      </tr>`;
+  });
+}
+
+function confirmOrder() {
+  alert("Order confirmed!");
+}
+
+function sendOrder() {
+  alert("Order sent to rider!");
+  orders = [];
+  renderOrders();
+}
+
+/* ===============================
+   LOGOUT
+   =============================== */
 function logout() {
   localStorage.removeItem("customer");
   window.location.replace("login.html");
