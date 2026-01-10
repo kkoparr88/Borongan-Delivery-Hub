@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Borongan Delivery Hub</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
 
 html, body {
   height: 100%;
-  margin: 0;
 }
 
 body {
   background: linear-gradient(135deg, #0d2a3a, #1b4f72);
-  color: #fff;
+  color: #eee;
 }
 
+/* ===== LAYOUT ===== */
 .app {
   display: flex;
   height: 100%;
@@ -30,18 +32,19 @@ body {
 
 /* ===== SIDEBAR ===== */
 .sidebar {
+  background-color: #0a1f2e;
   width: 320px;
   min-width: 320px;
-  background: #0a1f2e;
-  padding: 20px;
+  padding: 20px 25px;
   overflow-y: auto;
   border-right: 2px solid #00aaff;
 }
 
 .sidebar h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
   border-bottom: 2px solid #00aaff;
-  padding-bottom: 6px;
-  margin: 15px 0 10px;
+  padding-bottom: 5px;
 }
 
 .sidebar label {
@@ -54,41 +57,44 @@ body {
 .sidebar textarea,
 .sidebar select {
   width: 100%;
+  padding: 8px 10px;
   margin-top: 5px;
-  padding: 8px;
   border-radius: 6px;
   border: none;
-  background: #163545;
-  color: #fff;
+  background-color: #163545;
+  color: #ddd;
 }
 
+/* Qty + UoM */
 .qty-row {
   display: flex;
   gap: 8px;
 }
 
-.qty-row input {
-  width: 60px;
+.qty-row input[type="number"] {
+  width: 65px;
   text-align: center;
 }
 
 .qty-row select {
-  width: 90px;
+  width: 80px;
 }
 
 .qty-row input[type="text"] {
   flex: 1;
 }
 
+/* Buttons */
 .sidebar button {
   margin-top: 15px;
-  padding: 12px;
+  background: linear-gradient(90deg, #00aaff, #0077cc);
+  border: none;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 0;
   width: 100%;
   border-radius: 8px;
-  border: none;
-  background: linear-gradient(90deg, #00aaff, #0077cc);
-  color: white;
-  font-weight: 600;
   cursor: pointer;
 }
 
@@ -105,84 +111,78 @@ body {
 
 .hero {
   background: linear-gradient(90deg, #0f354f, #16629d);
-  padding: 25px;
+  padding: 30px;
   border-radius: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
-/* ===== GRID TABLE (LOCKED) ===== */
-.table {
-  background: #0a1f2e;
+/* ===== TABLE ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #0a1f2e;
   border-radius: 8px;
-  overflow: hidden;
+  table-layout: fixed;
 }
 
-.table-header,
-.table-row {
-  display: grid;
-  grid-template-columns: 1fr 70px 80px 160px 50px;
-  align-items: center;
-}
+col.col-item { width: 48%; }
+col.col-qty  { width: 8%; }
+col.col-uom  { width: 14%; }
+col.col-src  { width: 20%; }
+col.col-del  { width: 10%; }
 
-.table-header {
-  background: #003a65;
-  font-weight: 600;
-}
-
-.table-header div,
-.table-row div {
-  padding: 12px;
+th, td {
+  padding: 14px;
   border-bottom: 1px solid #004d87;
+  vertical-align: top;
 }
 
-.table-row:last-child div {
-  border-bottom: none;
+th {
+  background-color: #003a65;
 }
+
+.col-item { text-align: left; word-wrap: break-word; }
+.col-qty  { text-align: center; }
+.col-uom  { text-align: center; }
+.col-src  { text-align: left; word-wrap: break-word; }
+.col-del  { text-align: center; }
 
 .del-btn {
   background: none;
   border: none;
   color: #ff4d4d;
   font-size: 18px;
+  font-weight: bold;
   cursor: pointer;
 }
 
-/* ===== INFO BAR ===== */
+/* ===== INFO ===== */
 .info-frame {
-  margin: 20px 0;
-  padding: 15px;
-  background: #0a1f2e;
-  border-radius: 8px;
   display: flex;
   justify-content: space-between;
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #0a1f2e;
+  border-radius: 8px;
 }
 
-/* ===== ACTIONS ===== */
-.actions {
+.action-buttons {
   display: flex;
   gap: 15px;
 }
 
-.actions button {
+.action-buttons button {
   flex: 1;
   padding: 14px;
-  border-radius: 8px;
   border: none;
+  border-radius: 8px;
   background: linear-gradient(90deg, #00aaff, #0077cc);
   color: white;
   font-weight: bold;
+  cursor: pointer;
 }
 
-/* ===== FOOTER ===== */
-.footer {
-  margin-top: 25px;
-  padding: 12px;
-  text-align: center;
-  font-size: 13px;
-  opacity: 0.85;
-}
-
-/* ===== MOBILE ===== */
+/* ===== MOBILE (EXISTING) ===== */
 @media (max-width: 768px) {
   .app {
     flex-direction: column;
@@ -194,10 +194,21 @@ body {
     border-right: none;
     border-bottom: 2px solid #00aaff;
   }
+}
 
-  .table-header,
-  .table-row {
-    grid-template-columns: 1fr 50px 60px 1fr 40px;
+/* ===== MOBILE SCROLL FIX (NEW – SAFE) ===== */
+@media (max-width: 768px) {
+  html, body {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .app {
+    height: auto;
+  }
+
+  .main {
+    overflow-y: visible;
   }
 }
 </style>
@@ -205,163 +216,144 @@ body {
 
 <body>
 
-<script>
-const customer = JSON.parse(localStorage.getItem("customer"));
-if (!customer) window.location.replace("login.html");
-</script>
-
 <div class="app">
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <h2>Customer</h2>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>Order Details</h2>
 
-  <label>Name</label>
-  <input id="custName" disabled>
+    <label>Item</label>
+    <textarea id="item"></textarea>
 
-  <label>Email</label>
-  <input id="custEmail" disabled>
+    <label>Quantity</label>
+    <div class="qty-row">
+      <input type="number" id="qty" min="1" value="1">
 
-  <label>Messenger Profile</label>
-  <input id="custMessenger" disabled>
+      <select id="uom" onchange="handleUomChange()">
+        <option value="pcs" selected>pcs</option>
+        <option value="order">order</option>
+        <option value="kg">kg</option>
+        <option value="ltr">ltr</option>
+        <option value="others">others</option>
+      </select>
 
-  <label>Address</label>
-  <input id="custAddress" disabled>
-
-  <h2>Order Details</h2>
-
-  <label>Item</label>
-  <textarea id="item"></textarea>
-
-  <label>Quantity</label>
-  <div class="qty-row">
-    <input type="number" id="qty" value="1" min="1">
-    <select id="uom" onchange="onUomChange()">
-      <option value="pcs" selected>pcs</option>
-      <option value="order">order</option>
-      <option value="kg">kg</option>
-      <option value="ltr">ltr</option>
-      <option value="others">others</option>
-    </select>
-    <input id="uomOther" placeholder="specify" style="display:none">
-  </div>
-
-  <label>Source</label>
-  <input id="source">
-
-  <button onclick="addOrder()">Add Order</button>
-  <button class="logout" onclick="logout()">Logout</button>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-  <div class="hero">
-    <h1>Borongan Delivery Hub 🚚</h1>
-    <p>Customer Dashboard</p>
-  </div>
-
-  <div class="table">
-    <div class="table-header">
-      <div>Item</div>
-      <div>Qty</div>
-      <div>UoM</div>
-      <div>Source</div>
-      <div></div>
+      <input
+        type="text"
+        id="uomOther"
+        placeholder="specify"
+        style="display:none"
+      >
     </div>
-    <div id="orderTable"></div>
+
+    <label>Source</label>
+    <input id="source">
+
+    <button onclick="addOrder()">Add Order</button>
+    <button class="logout" onclick="logout()">Logout</button>
   </div>
 
-  <div class="info-frame">
-    <div><strong>Customer:</strong> <span id="infoName"></span></div>
-    <div><strong>Address:</strong> <span id="infoAddress"></span></div>
-  </div>
+  <!-- MAIN -->
+  <div class="main">
+    <div class="hero">
+      <h1>Borongan Delivery Hub 🚚</h1>
+      <p>Customer Dashboard</p>
+    </div>
 
-  <div class="actions">
-    <button onclick="confirmOrder()">Confirm</button>
-    <button onclick="sendOrder()">Send to Rider</button>
+    <table>
+      <colgroup>
+        <col class="col-item">
+        <col class="col-qty">
+        <col class="col-uom">
+        <col class="col-src">
+        <col class="col-del">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>UoM</th>
+          <th>Source</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="orderTable"></tbody>
+    </table>
   </div>
-
-  <div class="footer">
-    Developer Onig & Son with Parrot Code 2026, Borongan City<br>
-    For more I.T Solution Please Contact us @ 0909-5310-454 Look for Ms.Lianne
-  </div>
-</div>
-
 </div>
 
 <script>
 let orders = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-  custName.value = customer.name || "";
-  custEmail.value = customer.email || "";
-  custMessenger.value = customer.messenger || "";
-  custAddress.value = customer.address || "";
+function handleUomChange() {
+  const uom = document.getElementById("uom").value;
+  const other = document.getElementById("uomOther");
 
-  infoName.textContent = customer.name || "";
-  infoAddress.textContent = customer.address || "";
-
-  item.focus();
-});
-
-function onUomChange() {
-  uomOther.style.display = uom.value === "others" ? "block" : "none";
+  if (uom === "others") {
+    other.style.display = "block";
+    other.focus();
+  } else {
+    other.style.display = "none";
+    other.value = "";
+  }
 }
 
 function addOrder() {
-  const finalUom = uom.value === "others" ? uomOther.value.trim() : uom.value;
-  if (!item.value || !source.value || !finalUom) {
-    alert("Complete all fields");
+  const item = document.getElementById("item").value.trim();
+  const qtyVal = document.getElementById("qty").value;
+  const uomVal = document.getElementById("uom").value;
+  const otherUom = document.getElementById("uomOther").value.trim();
+  const src = document.getElementById("source").value.trim();
+
+  if (!item || !qtyVal || !src) {
+    alert("Fill all fields");
     return;
   }
 
-  orders.push({
-    item: item.value,
-    qty: qty.value,
-    uom: finalUom,
-    source: source.value
-  });
+  let finalUom = uomVal;
+  if (uomVal === "others") {
+    if (!otherUom) {
+      alert("Please specify unit of measure");
+      document.getElementById("uomOther").focus();
+      return;
+    }
+    finalUom = otherUom;
+  }
 
+  orders.push({ item, qty: qtyVal, uom: finalUom, source: src });
   renderOrders();
-  resetInputs();
+
+  document.getElementById("item").value = "";
+  document.getElementById("qty").value = 1;
+  document.getElementById("uom").value = "pcs";
+  document.getElementById("uomOther").value = "";
+  document.getElementById("uomOther").style.display = "none";
+  document.getElementById("source").value = "";
+
+  document.getElementById("item").focus();
 }
 
 function renderOrders() {
-  orderTable.innerHTML = "";
+  const table = document.getElementById("orderTable");
+  table.innerHTML = "";
+
   orders.forEach((o, i) => {
-    orderTable.innerHTML += `
-      <div class="table-row">
-        <div>${o.item}</div>
-        <div>${o.qty}</div>
-        <div>${o.uom}</div>
-        <div>${o.source}</div>
-        <div><button class="del-btn" onclick="removeOrder(${i})">✖</button></div>
-      </div>`;
+    table.innerHTML += `
+      <tr>
+        <td>${o.item}</td>
+        <td class="col-qty">${o.qty}</td>
+        <td class="col-uom">${o.uom}</td>
+        <td>${o.source}</td>
+        <td class="col-del">
+          <button class="del-btn" onclick="removeOrder(${i})">✖</button>
+        </td>
+      </tr>`;
   });
 }
 
 function removeOrder(i) {
   orders.splice(i, 1);
   renderOrders();
-  item.focus();
-}
-
-function resetInputs() {
-  item.value = "";
-  qty.value = 1;
-  uom.value = "pcs";
-  uomOther.value = "";
-  uomOther.style.display = "none";
-  source.value = "";
-  item.focus();
-}
-
-function confirmOrder() {
-  alert("Order confirmed");
-}
-
-function sendOrder() {
-  alert("Order sent to rider");
+  document.getElementById("item").focus();
 }
 
 function logout() {
@@ -372,4 +364,3 @@ function logout() {
 
 </body>
 </html>
-
