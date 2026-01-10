@@ -92,7 +92,7 @@ body {
   margin-bottom: 25px;
 }
 
-/* ===== TABLE (FIXED ALIGNMENT) ===== */
+/* ===== TABLE ===== */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -101,9 +101,10 @@ table {
   table-layout: fixed;
 }
 
-col.col-item { width: 65%; }
-col.col-qty { width: 10%; }
+col.col-item { width: 55%; }
+col.col-qty { width: 8%; }
 col.col-source { width: 25%; }
+col.col-del { width: 7%; }
 
 th, td {
   padding: 14px;
@@ -128,7 +129,24 @@ th {
 .col-source {
   text-align: left;
   word-wrap: break-word;
-  white-space: normal;
+}
+
+.col-del {
+  text-align: center;
+}
+
+/* Delete button */
+.del-btn {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.del-btn:hover {
+  color: #ff0000;
 }
 
 /* ===== INFO ===== */
@@ -221,12 +239,14 @@ th {
         <col class="col-item">
         <col class="col-qty">
         <col class="col-source">
+        <col class="col-del">
       </colgroup>
       <thead>
         <tr>
           <th class="col-item">Item</th>
           <th class="col-qty">Qty</th>
           <th class="col-source">Source</th>
+          <th class="col-del"></th>
         </tr>
       </thead>
       <tbody id="orderTable"></tbody>
@@ -302,14 +322,23 @@ function renderOrders() {
   const table = document.getElementById("orderTable");
   table.innerHTML = "";
 
-  orders.forEach(o => {
+  orders.forEach((o, index) => {
     table.innerHTML += `
       <tr>
         <td class="col-item">${o.item}</td>
         <td class="col-qty">${o.qty}</td>
         <td class="col-source">${o.source}</td>
+        <td class="col-del">
+          <button class="del-btn" onclick="removeOrder(${index})">✖</button>
+        </td>
       </tr>`;
   });
+}
+
+function removeOrder(index) {
+  orders.splice(index, 1);
+  renderOrders();
+  document.getElementById("item").focus();
 }
 
 function confirmOrder() {
