@@ -38,7 +38,7 @@ body {
 
 .sidebar h2 {
   font-size: 20px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   border-bottom: 2px solid #00aaff;
   padding-bottom: 5px;
 }
@@ -61,6 +61,7 @@ body {
   color: #ddd;
 }
 
+/* Quantity + UOM */
 .qty-row {
   display: flex;
   gap: 8px;
@@ -79,6 +80,7 @@ body {
   flex: 1;
 }
 
+/* Buttons */
 .sidebar button {
   margin-top: 15px;
   background: linear-gradient(90deg, #00aaff, #0077cc);
@@ -152,7 +154,7 @@ td {
   cursor: pointer;
 }
 
-/* ================= CUSTOMER INFO ================= */
+/* ================= CUSTOMER SUMMARY (MAIN) ================= */
 .info-frame {
   display: flex;
   justify-content: space-between;
@@ -179,9 +181,8 @@ td {
   cursor: pointer;
 }
 
-/* ================= MOBILE FIX ================= */
+/* ================= MOBILE ================= */
 @media (max-width: 768px) {
-
   .app {
     flex-direction: column;
   }
@@ -197,7 +198,6 @@ td {
     width: 100%;
   }
 
-  /* allow natural page scroll */
   .sidebar,
   .main {
     overflow: visible;
@@ -212,7 +212,21 @@ td {
 
   <!-- SIDEBAR -->
   <div class="sidebar">
-    <h2>Order Details</h2>
+
+    <!-- CUSTOMER DETAILS -->
+    <h2>Customer Details</h2>
+
+    <label>Name</label>
+    <input id="custName" value="Kiko" disabled>
+
+    <label>Email</label>
+    <input id="custEmail" value="jedrichparr88@gmail.com" disabled>
+
+    <label>Address</label>
+    <textarea id="custAddress" disabled>Barangay E Borongan City</textarea>
+
+    <!-- ORDER DETAILS -->
+    <h2 style="margin-top:25px;">Order Details</h2>
 
     <label>Item</label>
     <textarea id="item"></textarea>
@@ -265,7 +279,7 @@ td {
       <tbody id="orderTable"></tbody>
     </table>
 
-    <!-- CUSTOMER DETAILS -->
+    <!-- CUSTOMER SUMMARY -->
     <div class="info-frame">
       <div><strong>Customer:</strong> Kiko</div>
       <div><strong>Address:</strong> Barangay E Borongan City</div>
