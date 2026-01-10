@@ -211,7 +211,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!customer) {
     history.replaceState(null, "", "login.html");
-    window.location.replace("login.html");
+    window.location.replace("./");
+
     return;
   }
 
@@ -246,3 +247,4 @@ function renderOrders() {
   table.innerHTML = "";
   orders.forEach(o => {
     table.innerHTML += `<tr><td>${o.item}</td><td>${o.qty}</td><td>${o.source}</td></tr>`;
+
