@@ -8,14 +8,14 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
-html, body {
-  height: 100%;
-  margin: 0;
-}
-
 * {
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
 }
 
 body {
@@ -28,7 +28,7 @@ body {
   height: 100%;
 }
 
-/* SIDEBAR */
+/* ===== SIDEBAR ===== */
 .sidebar {
   width: 320px;
   min-width: 320px;
@@ -40,7 +40,7 @@ body {
 
 .sidebar h2 {
   border-bottom: 2px solid #00aaff;
-  padding-bottom: 5px;
+  padding-bottom: 6px;
   margin: 15px 0 10px;
 }
 
@@ -96,7 +96,7 @@ body {
   background: #aa3333;
 }
 
-/* MAIN */
+/* ===== MAIN ===== */
 .main {
   flex: 1;
   padding: 30px;
@@ -110,22 +110,33 @@ body {
   margin-bottom: 20px;
 }
 
-/* TABLE */
-table {
-  width: 100%;
-  border-collapse: collapse;
+/* ===== GRID TABLE (LOCKED) ===== */
+.table {
   background: #0a1f2e;
   border-radius: 8px;
-  table-layout: fixed;
+  overflow: hidden;
 }
 
-th, td {
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 1fr 70px 80px 160px 50px;
+  align-items: center;
+}
+
+.table-header {
+  background: #003a65;
+  font-weight: 600;
+}
+
+.table-header div,
+.table-row div {
   padding: 12px;
   border-bottom: 1px solid #004d87;
 }
 
-th {
-  background: #003a65;
+.table-row:last-child div {
+  border-bottom: none;
 }
 
 .del-btn {
@@ -136,7 +147,7 @@ th {
   cursor: pointer;
 }
 
-/* INFO BAR */
+/* ===== INFO BAR ===== */
 .info-frame {
   margin: 20px 0;
   padding: 15px;
@@ -146,7 +157,7 @@ th {
   justify-content: space-between;
 }
 
-/* ACTIONS */
+/* ===== ACTIONS ===== */
 .actions {
   display: flex;
   gap: 15px;
@@ -162,16 +173,31 @@ th {
   font-weight: bold;
 }
 
-/* MOBILE */
+/* ===== FOOTER ===== */
+.footer {
+  margin-top: 25px;
+  padding: 12px;
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* ===== MOBILE ===== */
 @media (max-width: 768px) {
   .app {
     flex-direction: column;
   }
+
   .sidebar {
     width: 100%;
     min-width: 100%;
     border-right: none;
     border-bottom: 2px solid #00aaff;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr 50px 60px 1fr 40px;
   }
 }
 </style>
@@ -180,11 +206,8 @@ th {
 <body>
 
 <script>
-/* SESSION GUARD */
 const customer = JSON.parse(localStorage.getItem("customer"));
-if (!customer) {
-  window.location.replace("login.html");
-}
+if (!customer) window.location.replace("login.html");
 </script>
 
 <div class="app">
@@ -237,18 +260,16 @@ if (!customer) {
     <p>Customer Dashboard</p>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th>Qty</th>
-        <th>UoM</th>
-        <th>Source</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="orderTable"></tbody>
-  </table>
+  <div class="table">
+    <div class="table-header">
+      <div>Item</div>
+      <div>Qty</div>
+      <div>UoM</div>
+      <div>Source</div>
+      <div></div>
+    </div>
+    <div id="orderTable"></div>
+  </div>
 
   <div class="info-frame">
     <div><strong>Customer:</strong> <span id="infoName"></span></div>
@@ -259,12 +280,16 @@ if (!customer) {
     <button onclick="confirmOrder()">Confirm</button>
     <button onclick="sendOrder()">Send to Rider</button>
   </div>
+
+  <div class="footer">
+    Developer Onig & Son with Parrot Code 2026, Borongan City<br>
+    For more I.T Solution Please Contact us @ 0909-5310-454 (Look for Ms. Liaane)
+  </div>
 </div>
 
 </div>
 
 <script>
-/* INITIALIZE UI */
 let orders = [];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -279,13 +304,12 @@ document.addEventListener("DOMContentLoaded", () => {
   item.focus();
 });
 
-/* ORDER LOGIC */
 function onUomChange() {
-  uomOther.style.display = (uom.value === "others") ? "block" : "none";
+  uomOther.style.display = uom.value === "others" ? "block" : "none";
 }
 
 function addOrder() {
-  const finalUom = (uom.value === "others") ? uomOther.value.trim() : uom.value;
+  const finalUom = uom.value === "others" ? uomOther.value.trim() : uom.value;
   if (!item.value || !source.value || !finalUom) {
     alert("Complete all fields");
     return;
@@ -306,13 +330,13 @@ function renderOrders() {
   orderTable.innerHTML = "";
   orders.forEach((o, i) => {
     orderTable.innerHTML += `
-      <tr>
-        <td>${o.item}</td>
-        <td>${o.qty}</td>
-        <td>${o.uom}</td>
-        <td>${o.source}</td>
-        <td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td>
-      </tr>`;
+      <div class="table-row">
+        <div>${o.item}</div>
+        <div>${o.qty}</div>
+        <div>${o.uom}</div>
+        <div>${o.source}</div>
+        <div><button class="del-btn" onclick="removeOrder(${i})">✖</button></div>
+      </div>`;
   });
 }
 
