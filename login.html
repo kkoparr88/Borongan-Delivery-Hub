@@ -17,7 +17,7 @@
 
     body {
       background: linear-gradient(135deg, #0d2a3a, #1b4f72);
-      min-height: 100vh;              /* mobile-safe */
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -61,11 +61,6 @@
       color: #ddd;
     }
 
-    input:focus {
-      background-color: #1f4967;
-      outline: none;
-    }
-
     button {
       width: 100%;
       padding: 12px;
@@ -102,12 +97,12 @@
 
     <div class="input-group">
       <label>Email</label>
-      <input id="email" type="email" placeholder="Enter your email" />
+      <input id="email" type="email" />
     </div>
 
     <div class="input-group">
       <label>Password</label>
-      <input id="password" type="password" placeholder="Enter your password" />
+      <input id="password" type="password" />
     </div>
 
     <button onclick="login()">Login</button>
@@ -117,7 +112,6 @@
   </div>
 
 <script>
-/* VERIFIED WORKING APPS SCRIPT URL */
 const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbzKNZykX5pLbNdjkTZu1brXY8LcovIhxATQpjlJpmEwOoWS0kflxGAhrHHsmFINzkxT/exec";
 
@@ -133,28 +127,33 @@ function login() {
     return;
   }
 
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "login",
-      email: email,
-      password: password
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      localStorage.setItem("customer", JSON.stringify(data.customer));
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", SCRIPT_URL, true);
 
-      /* GitHub Pages project-site safe redirect */
-      window.location.replace("./");
-    } else {
-      errorBox.textContent = data.message;
+  xhr.onload = function () {
+    try {
+      const data = JSON.parse(xhr.responseText);
+
+      if (data.success) {
+        localStorage.setItem("customer", JSON.stringify(data.customer));
+        window.location.replace("./");
+      } else {
+        errorBox.textContent = data.message;
+      }
+    } catch (e) {
+      errorBox.textContent = "Invalid server response.";
     }
-  })
-  .catch(() => {
+  };
+
+  xhr.onerror = function () {
     errorBox.textContent = "Network error.";
-  });
+  };
+
+  xhr.send(JSON.stringify({
+    action: "login",
+    email: email,
+    password: password
+  }));
 }
 </script>
 </body>
