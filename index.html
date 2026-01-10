@@ -21,7 +21,6 @@ body {
   min-height: 100vh;
 }
 
-/* ===== LAYOUT ===== */
 .app {
   display: flex;
   min-height: 100vh;
@@ -65,15 +64,19 @@ body {
 /* Qty + UoM */
 .qty-row {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
-.qty-row input {
-  width: 70px;
+.qty-row input[type="number"] {
+  width: 65px;
   text-align: center;
 }
 
 .qty-row select {
+  width: 80px;
+}
+
+.qty-row input[type="text"] {
   flex: 1;
 }
 
@@ -120,8 +123,8 @@ table {
 
 col.col-item { width: 48%; }
 col.col-qty  { width: 8%; }
-col.col-uom  { width: 10%; }
-col.col-src  { width: 24%; }
+col.col-uom  { width: 14%; }
+col.col-src  { width: 20%; }
 col.col-del  { width: 10%; }
 
 th, td {
@@ -197,23 +200,7 @@ th {
 
   <!-- SIDEBAR -->
   <div class="sidebar">
-    <h2>Customer Details</h2>
-
-    <label>Name</label>
-    <input id="name" disabled>
-
-    <label>Contact Number</label>
-    <input id="contact" disabled>
-
-    <label>Messenger Profile</label>
-    <input id="messenger" disabled>
-
-    <label>Delivery Address</label>
-    <input id="location" disabled>
-
-    <button class="logout" onclick="logout()">Logout</button>
-
-    <h2 style="margin-top:30px">Order Details</h2>
+    <h2>Order Details</h2>
 
     <label>Item</label>
     <textarea id="item"></textarea>
@@ -221,19 +208,28 @@ th {
     <label>Quantity</label>
     <div class="qty-row">
       <input type="number" id="qty" min="1" value="1">
-      <select id="uom">
+
+      <select id="uom" onchange="handleUomChange()">
         <option value="pcs" selected>pcs</option>
         <option value="order">order</option>
         <option value="kg">kg</option>
         <option value="ltr">ltr</option>
         <option value="others">others</option>
       </select>
+
+      <input
+        type="text"
+        id="uomOther"
+        placeholder="specify"
+        style="display:none"
+      >
     </div>
 
     <label>Source</label>
     <input id="source">
 
     <button onclick="addOrder()">Add Order</button>
+    <button class="logout" onclick="logout()">Logout</button>
   </div>
 
   <!-- MAIN -->
@@ -253,122 +249,101 @@ th {
       </colgroup>
       <thead>
         <tr>
-          <th class="col-item">Item</th>
-          <th class="col-qty">Qty</th>
-          <th class="col-uom">UoM</th>
-          <th class="col-src">Source</th>
-          <th class="col-del"></th>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>UoM</th>
+          <th>Source</th>
+          <th></th>
         </tr>
       </thead>
       <tbody id="orderTable"></tbody>
     </table>
-
-    <div class="info-frame">
-      <div><strong>Customer:</strong> <span id="infoName"></span></div>
-      <div><strong>Address:</strong> <span id="infoLocation"></span></div>
-    </div>
-
-    <div class="action-buttons">
-      <button onclick="confirmOrder()">Confirm</button>
-      <button onclick="sendOrder()">Send to Rider</button>
-    </div>
   </div>
 </div>
 
 <script>
-/* ===== SESSION INIT ===== */
-document.addEventListener("DOMContentLoaded", () => {
-  let customer;
-
-  try {
-    const raw = localStorage.getItem("customer");
-    if (!raw) throw new Error("No session");
-
-    customer = JSON.parse(raw);
-    if (!customer || !customer.name) throw new Error("Invalid session");
-  } catch {
-    window.location.replace("login.html");
-    return;
-  }
-
-  document.getElementById("name").value = customer.name || "";
-  document.getElementById("contact").value = customer.contact || "";
-  document.getElementById("messenger").value = customer.messenger || "";
-  document.getElementById("location").value = customer.address || "";
-
-  document.getElementById("infoName").textContent = customer.name || "";
-  document.getElementById("infoLocation").textContent = customer.address || "";
-
-  document.getElementById("item").focus();
-});
-
-/* ===== ORDER LOGIC ===== */
 let orders = [];
 
+function handleUomChange() {
+  const uom = document.getElementById("uom").value;
+  const other = document.getElementById("uomOther");
+
+  if (uom === "others") {
+    other.style.display = "block";
+    other.focus();
+  } else {
+    other.style.display = "none";
+    other.value = "";
+  }
+}
+
 function addOrder() {
-  const itemEl = document.getElementById("item");
-  const qtyEl = document.getElementById("qty");
-  const uomEl = document.getElementById("uom");
-  const srcEl = document.getElementById("source");
+  const item = item.value.trim();
+  const qtyVal = qty.value;
+  const uomVal = uom.value;
+  const otherUom = uomOther.value.trim();
+  const src = source.value.trim();
 
-  const item = itemEl.value.trim();
-  const qty = qtyEl.value;
-  const uom = uomEl.value;
-  const source = srcEl.value.trim();
-
-  if (!item || !qty || !source) {
+  if (!item || !qtyVal || !src) {
     alert("Fill all fields");
     return;
   }
 
-  orders.push({ item, qty, uom, source });
+  let finalUom = uomVal;
+
+  if (uomVal === "others") {
+    if (!otherUom) {
+      alert("Please specify unit of measure");
+      uomOther.focus();
+      return;
+    }
+    finalUom = otherUom;
+  }
+
+  orders.push({
+    item,
+    qty: qtyVal,
+    uom: finalUom,
+    source: src
+  });
+
   renderOrders();
 
-  itemEl.value = "";
-  qtyEl.value = 1;
-  uomEl.value = "pcs";
-  srcEl.value = "";
+  item.value = "";
+  qty.value = 1;
+  uom.value = "pcs";
+  uomOther.value = "";
+  uomOther.style.display = "none";
+  source.value = "";
 
-  itemEl.focus();
+  item.focus();
 }
 
 function renderOrders() {
-  const table = document.getElementById("orderTable");
-  table.innerHTML = "";
-
-  orders.forEach((o, index) => {
-    table.innerHTML += `
+  orderTable.innerHTML = "";
+  orders.forEach((o, i) => {
+    orderTable.innerHTML += `
       <tr>
-        <td class="col-item">${o.item}</td>
+        <td>${o.item}</td>
         <td class="col-qty">${o.qty}</td>
         <td class="col-uom">${o.uom}</td>
-        <td class="col-src">${o.source}</td>
+        <td>${o.source}</td>
         <td class="col-del">
-          <button class="del-btn" onclick="removeOrder(${index})">✖</button>
+          <button class="del-btn" onclick="removeOrder(${i})">✖</button>
         </td>
       </tr>`;
   });
 }
 
-function removeOrder(index) {
-  orders.splice(index, 1);
+function removeOrder(i) {
+  orders.splice(i, 1);
   renderOrders();
-  document.getElementById("item").focus();
-}
-
-function confirmOrder() {
-  alert("Order confirmed!");
-}
-
-function sendOrder() {
-  alert("Order sent to rider!");
-  orders = [];
-  renderOrders();
+  item.focus();
 }
 
 function logout() {
-  localStorage.removeItem("customer");
-  window.location.replace("login.html");
+  localStorage.clear();
+  location.href = "login.html";
 }
 </script>
 
