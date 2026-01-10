@@ -15,6 +15,9 @@
   font-family: 'Poppins', sans-serif;
 }
 
+/* ===============================
+   BASE
+   =============================== */
 html, body {
   height: 100%;
 }
@@ -22,21 +25,25 @@ html, body {
 body {
   background: linear-gradient(135deg, #0d2a3a, #1b4f72);
   color: #eee;
+  overflow-y: auto; /* page can always scroll */
 }
 
-/* ===== LAYOUT ===== */
+/* ===============================
+   APP LAYOUT (DESKTOP FIRST)
+   =============================== */
 .app {
   display: flex;
-  height: 100%;
+  min-height: 100vh;
 }
 
-/* ===== SIDEBAR ===== */
+/* ===============================
+   SIDEBAR
+   =============================== */
 .sidebar {
   background-color: #0a1f2e;
   width: 320px;
   min-width: 320px;
   padding: 20px 25px;
-  overflow-y: auto;
   border-right: 2px solid #00aaff;
 }
 
@@ -65,26 +72,24 @@ body {
   color: #ddd;
 }
 
-/* Qty + UoM */
 .qty-row {
   display: flex;
   gap: 8px;
 }
 
-.qty-row input[type="number"] {
-  width: 65px;
+.qty-row input {
+  width: 70px;
   text-align: center;
 }
 
 .qty-row select {
-  width: 80px;
+  width: 90px;
 }
 
 .qty-row input[type="text"] {
   flex: 1;
 }
 
-/* Buttons */
 .sidebar button {
   margin-top: 15px;
   background: linear-gradient(90deg, #00aaff, #0077cc);
@@ -102,11 +107,12 @@ body {
   background: #aa3333;
 }
 
-/* ===== MAIN ===== */
+/* ===============================
+   MAIN CONTENT
+   =============================== */
 .main {
   flex: 1;
   padding: 30px;
-  overflow-y: auto;
 }
 
 .hero {
@@ -116,7 +122,9 @@ body {
   margin-bottom: 25px;
 }
 
-/* ===== TABLE ===== */
+/* ===============================
+   TABLE
+   =============================== */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -125,10 +133,10 @@ table {
   table-layout: fixed;
 }
 
-col.col-item { width: 48%; }
+col.col-item { width: 46%; }
 col.col-qty  { width: 8%; }
 col.col-uom  { width: 14%; }
-col.col-src  { width: 20%; }
+col.col-src  { width: 22%; }
 col.col-del  { width: 10%; }
 
 th, td {
@@ -141,22 +149,27 @@ th {
   background-color: #003a65;
 }
 
-.col-item { text-align: left; word-wrap: break-word; }
-.col-qty  { text-align: center; }
-.col-uom  { text-align: center; }
-.col-src  { text-align: left; word-wrap: break-word; }
-.col-del  { text-align: center; }
+td {
+  word-wrap: break-word;
+}
+
+.col-qty,
+.col-uom,
+.col-del {
+  text-align: center;
+}
 
 .del-btn {
   background: none;
   border: none;
   color: #ff4d4d;
   font-size: 18px;
-  font-weight: bold;
   cursor: pointer;
 }
 
-/* ===== INFO ===== */
+/* ===============================
+   INFO + ACTIONS
+   =============================== */
 .info-frame {
   display: flex;
   justify-content: space-between;
@@ -182,8 +195,12 @@ th {
   cursor: pointer;
 }
 
-/* ===== MOBILE (EXISTING) ===== */
+/* ===============================
+   MOBILE — SAFE, NON-DESTRUCTIVE
+   =============================== */
 @media (max-width: 768px) {
+
+  /* keep flex, just stack naturally */
   .app {
     flex-direction: column;
   }
@@ -194,21 +211,15 @@ th {
     border-right: none;
     border-bottom: 2px solid #00aaff;
   }
-}
-
-/* ===== MOBILE SCROLL FIX (NEW – SAFE) ===== */
-@media (max-width: 768px) {
-  html, body {
-    height: auto;
-    overflow-y: auto;
-  }
-
-  .app {
-    height: auto;
-  }
 
   .main {
-    overflow-y: visible;
+    width: 100%;
+  }
+
+  /* IMPORTANT: remove inner scrolling traps */
+  .sidebar,
+  .main {
+    overflow: visible;
   }
 }
 </style>
@@ -228,7 +239,6 @@ th {
     <label>Quantity</label>
     <div class="qty-row">
       <input type="number" id="qty" min="1" value="1">
-
       <select id="uom" onchange="handleUomChange()">
         <option value="pcs" selected>pcs</option>
         <option value="order">order</option>
@@ -236,13 +246,7 @@ th {
         <option value="ltr">ltr</option>
         <option value="others">others</option>
       </select>
-
-      <input
-        type="text"
-        id="uomOther"
-        placeholder="specify"
-        style="display:none"
-      >
+      <input id="uomOther" type="text" placeholder="specify" style="display:none">
     </div>
 
     <label>Source</label>
@@ -278,71 +282,78 @@ th {
       </thead>
       <tbody id="orderTable"></tbody>
     </table>
+
+    <div class="info-frame">
+      <div><strong>Customer:</strong> Kiko</div>
+      <div><strong>Address:</strong> Barangay E Borongan City</div>
+    </div>
+
+    <div class="action-buttons">
+      <button onclick="alert('Confirmed')">Confirm</button>
+      <button onclick="alert('Sent to rider')">Send to Rider</button>
+    </div>
   </div>
+
 </div>
 
 <script>
 let orders = [];
 
 function handleUomChange() {
-  const uom = document.getElementById("uom").value;
-  const other = document.getElementById("uomOther");
-
-  if (uom === "others") {
-    other.style.display = "block";
-    other.focus();
+  const u = document.getElementById("uom");
+  const o = document.getElementById("uomOther");
+  if (u.value === "others") {
+    o.style.display = "block";
+    o.focus();
   } else {
-    other.style.display = "none";
-    other.value = "";
+    o.style.display = "none";
+    o.value = "";
   }
 }
 
 function addOrder() {
   const item = document.getElementById("item").value.trim();
-  const qtyVal = document.getElementById("qty").value;
-  const uomVal = document.getElementById("uom").value;
-  const otherUom = document.getElementById("uomOther").value.trim();
+  const qty = document.getElementById("qty").value;
   const src = document.getElementById("source").value.trim();
+  let uom = document.getElementById("uom").value;
+  const other = document.getElementById("uomOther").value.trim();
 
-  if (!item || !qtyVal || !src) {
+  if (!item || !qty || !src) {
     alert("Fill all fields");
     return;
   }
 
-  let finalUom = uomVal;
-  if (uomVal === "others") {
-    if (!otherUom) {
-      alert("Please specify unit of measure");
+  if (uom === "others") {
+    if (!other) {
+      alert("Specify unit of measure");
       document.getElementById("uomOther").focus();
       return;
     }
-    finalUom = otherUom;
+    uom = other;
   }
 
-  orders.push({ item, qty: qtyVal, uom: finalUom, source: src });
+  orders.push({ item, qty, uom, src });
   renderOrders();
 
   document.getElementById("item").value = "";
   document.getElementById("qty").value = 1;
   document.getElementById("uom").value = "pcs";
-  document.getElementById("uomOther").value = "";
   document.getElementById("uomOther").style.display = "none";
+  document.getElementById("uomOther").value = "";
   document.getElementById("source").value = "";
-
   document.getElementById("item").focus();
 }
 
 function renderOrders() {
-  const table = document.getElementById("orderTable");
-  table.innerHTML = "";
-
+  const tbody = document.getElementById("orderTable");
+  tbody.innerHTML = "";
   orders.forEach((o, i) => {
-    table.innerHTML += `
+    tbody.innerHTML += `
       <tr>
         <td>${o.item}</td>
         <td class="col-qty">${o.qty}</td>
         <td class="col-uom">${o.uom}</td>
-        <td>${o.source}</td>
+        <td>${o.src}</td>
         <td class="col-del">
           <button class="del-btn" onclick="removeOrder(${i})">✖</button>
         </td>
