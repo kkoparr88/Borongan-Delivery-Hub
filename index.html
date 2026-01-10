@@ -241,6 +241,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("infoName").textContent = customer.name || "";
   document.getElementById("infoLocation").textContent = customer.address || "";
+
+  // ✅ SET FOCUS TO ITEM FIELD ON LOAD
+  document.getElementById("item").focus();
 });
 
 /* ===============================
@@ -305,3 +308,4 @@ function logout() {
 
 </body>
 </html>
+
