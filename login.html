@@ -3,64 +3,28 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Borongan Delivery Hub | Login</title>
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-
-body {
-  background: linear-gradient(135deg, #0d2a3a, #1b4f72);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  overflow-y: auto;
-}
-
-.login-box {
-  background-color: #0a1f2e;
-  padding: 30px;
-  border-radius: 12px;
-  width: 320px;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-}
-.error { color: #ff8080; text-align: center; margin-top: 10px; }
-</style>
+<title>Login</title>
 </head>
 
 <body>
-<div class="login-box">
-  <h2>Customer Login</h2>
 
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-
-  <button onclick="login()">Login</button>
-  <button onclick="location.href='signup.html'">Sign Up</button>
-
-  <div id="error" class="error"></div>
-</div>
+<h2>Login</h2>
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button id="loginBtn">Login</button>
+<div id="error"></div>
 
 <script>
 const SCRIPT_URL = "PASTE YOUR /exec URL HERE";
 
-function login() {
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const email = email.value.trim();
+  const password = password.value.trim();
   const error = document.getElementById("error");
   error.textContent = "";
 
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-
   if (!email || !password) {
-    error.textContent = "Please enter both fields.";
+    error.textContent = "Missing fields";
     return;
   }
 
@@ -73,13 +37,14 @@ function login() {
     const data = JSON.parse(t);
     if (data.success) {
       localStorage.setItem("customer", JSON.stringify(data.customer));
-      window.location.replace("./");   // index.html
+      window.location.replace("./");
     } else {
       error.textContent = data.message;
     }
   })
   .catch(() => error.textContent = "Network error");
-}
+});
 </script>
+
 </body>
 </html>
