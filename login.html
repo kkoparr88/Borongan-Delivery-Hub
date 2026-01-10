@@ -17,7 +17,7 @@
 
     body {
       background: linear-gradient(135deg, #0d2a3a, #1b4f72);
-      min-height: 100vh;            /* mobile-safe */
+      min-height: 100vh;              /* mobile-safe */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -117,7 +117,7 @@
   </div>
 
 <script>
-/* Your verified working Apps Script URL */
+/* VERIFIED WORKING APPS SCRIPT URL */
 const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbzKNZykX5pLbNdjkTZu1brXY8LcovIhxATQpjlJpmEwOoWS0kflxGAhrHHsmFINzkxT/exec";
 
@@ -135,9 +135,6 @@ function login() {
 
   fetch(SCRIPT_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
     body: JSON.stringify({
       action: "login",
       email: email,
@@ -149,14 +146,14 @@ function login() {
     if (data.success) {
       localStorage.setItem("customer", JSON.stringify(data.customer));
 
-      /* GitHub Pages project-site safe */
+      /* GitHub Pages project-site safe redirect */
       window.location.replace("./");
     } else {
       errorBox.textContent = data.message;
     }
   })
-  .catch(err => {
-    errorBox.textContent = "Network error. Please try again.";
+  .catch(() => {
+    errorBox.textContent = "Network error.";
   });
 }
 </script>
