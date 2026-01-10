@@ -15,19 +15,30 @@
   font-family: 'Poppins', sans-serif;
 }
 
+/* ===============================
+   BASE
+   =============================== */
+html, body {
+  height: 100%;
+}
+
 body {
   background: linear-gradient(135deg, #0d2a3a, #1b4f72);
   color: #eee;
+  overflow-y: auto; /* page can always scroll */
 }
 
 /* ===============================
-   DESKTOP LAYOUT (UNCHANGED)
+   APP LAYOUT (DESKTOP FIRST)
    =============================== */
 .app {
   display: flex;
   min-height: 100vh;
 }
 
+/* ===============================
+   SIDEBAR
+   =============================== */
 .sidebar {
   background-color: #0a1f2e;
   width: 320px;
@@ -36,14 +47,6 @@ body {
   border-right: 2px solid #00aaff;
 }
 
-.main {
-  flex: 1;
-  padding: 30px;
-}
-
-/* ===============================
-   SIDEBAR
-   =============================== */
 .sidebar h2 {
   font-size: 20px;
   margin-bottom: 15px;
@@ -107,6 +110,11 @@ body {
 /* ===============================
    MAIN CONTENT
    =============================== */
+.main {
+  flex: 1;
+  padding: 30px;
+}
+
 .hero {
   background: linear-gradient(90deg, #0f354f, #16629d);
   padding: 30px;
@@ -188,31 +196,30 @@ td {
 }
 
 /* ===============================
-   MOBILE VIEW — FINAL FIX
+   MOBILE — SAFE, NON-DESTRUCTIVE
    =============================== */
 @media (max-width: 768px) {
 
-  /* let the PAGE scroll */
-  body {
-    overflow-y: auto;
-  }
-
-  /* remove app-style layout */
+  /* keep flex, just stack naturally */
   .app {
-    display: block;
-    min-height: unset;
-  }
-
-  /* stack sections naturally */
-  .sidebar,
-  .main {
-    width: 100%;
-    padding: 20px;
-    border-right: none;
+    flex-direction: column;
   }
 
   .sidebar {
+    width: 100%;
+    min-width: 100%;
+    border-right: none;
     border-bottom: 2px solid #00aaff;
+  }
+
+  .main {
+    width: 100%;
+  }
+
+  /* IMPORTANT: remove inner scrolling traps */
+  .sidebar,
+  .main {
+    overflow: visible;
   }
 }
 </style>
@@ -232,7 +239,6 @@ td {
     <label>Quantity</label>
     <div class="qty-row">
       <input type="number" id="qty" min="1" value="1">
-
       <select id="uom" onchange="handleUomChange()">
         <option value="pcs" selected>pcs</option>
         <option value="order">order</option>
@@ -240,7 +246,6 @@ td {
         <option value="ltr">ltr</option>
         <option value="others">others</option>
       </select>
-
       <input id="uomOther" type="text" placeholder="specify" style="display:none">
     </div>
 
@@ -313,15 +318,22 @@ function addOrder() {
   let uom = document.getElementById("uom").value;
   const other = document.getElementById("uomOther").value.trim();
 
-  if (!item || !qty || !src) return alert("Fill all fields");
+  if (!item || !qty || !src) {
+    alert("Fill all fields");
+    return;
+  }
 
   if (uom === "others") {
-    if (!other) return alert("Specify unit");
+    if (!other) {
+      alert("Specify unit of measure");
+      document.getElementById("uomOther").focus();
+      return;
+    }
     uom = other;
   }
 
   orders.push({ item, qty, uom, src });
-  render();
+  renderOrders();
 
   document.getElementById("item").value = "";
   document.getElementById("qty").value = 1;
@@ -332,32 +344,32 @@ function addOrder() {
   document.getElementById("item").focus();
 }
 
-function render() {
-  const t = document.getElementById("orderTable");
-  t.innerHTML = "";
-  orders.forEach((o,i)=>{
-    t.innerHTML += `
+function renderOrders() {
+  const tbody = document.getElementById("orderTable");
+  tbody.innerHTML = "";
+  orders.forEach((o, i) => {
+    tbody.innerHTML += `
       <tr>
         <td>${o.item}</td>
         <td class="col-qty">${o.qty}</td>
         <td class="col-uom">${o.uom}</td>
         <td>${o.src}</td>
         <td class="col-del">
-          <button class="del-btn" onclick="remove(${i})">✖</button>
+          <button class="del-btn" onclick="removeOrder(${i})">✖</button>
         </td>
       </tr>`;
   });
 }
 
-function remove(i){
-  orders.splice(i,1);
-  render();
+function removeOrder(i) {
+  orders.splice(i, 1);
+  renderOrders();
   document.getElementById("item").focus();
 }
 
-function logout(){
+function logout() {
   localStorage.clear();
-  location.replace("login.html");
+  window.location.replace("login.html");
 }
 </script>
 
