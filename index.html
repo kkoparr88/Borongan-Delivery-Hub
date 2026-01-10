@@ -15,30 +15,19 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* ===============================
-   BASE
-   =============================== */
-html, body {
-  height: 100%;
-}
-
 body {
   background: linear-gradient(135deg, #0d2a3a, #1b4f72);
   color: #eee;
-  overflow-y: auto; /* page can always scroll */
+  overflow-y: auto;
 }
 
-/* ===============================
-   APP LAYOUT (DESKTOP FIRST)
-   =============================== */
+/* ================= DESKTOP LAYOUT ================= */
 .app {
   display: flex;
   min-height: 100vh;
 }
 
-/* ===============================
-   SIDEBAR
-   =============================== */
+/* ================= SIDEBAR ================= */
 .sidebar {
   background-color: #0a1f2e;
   width: 320px;
@@ -107,9 +96,7 @@ body {
   background: #aa3333;
 }
 
-/* ===============================
-   MAIN CONTENT
-   =============================== */
+/* ================= MAIN ================= */
 .main {
   flex: 1;
   padding: 30px;
@@ -122,9 +109,7 @@ body {
   margin-bottom: 25px;
 }
 
-/* ===============================
-   TABLE
-   =============================== */
+/* ================= TABLE ================= */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -167,9 +152,7 @@ td {
   cursor: pointer;
 }
 
-/* ===============================
-   INFO + ACTIONS
-   =============================== */
+/* ================= CUSTOMER INFO ================= */
 .info-frame {
   display: flex;
   justify-content: space-between;
@@ -179,6 +162,7 @@ td {
   border-radius: 8px;
 }
 
+/* ================= ACTION BUTTONS ================= */
 .action-buttons {
   display: flex;
   gap: 15px;
@@ -195,12 +179,9 @@ td {
   cursor: pointer;
 }
 
-/* ===============================
-   MOBILE — SAFE, NON-DESTRUCTIVE
-   =============================== */
+/* ================= MOBILE FIX ================= */
 @media (max-width: 768px) {
 
-  /* keep flex, just stack naturally */
   .app {
     flex-direction: column;
   }
@@ -216,7 +197,7 @@ td {
     width: 100%;
   }
 
-  /* IMPORTANT: remove inner scrolling traps */
+  /* allow natural page scroll */
   .sidebar,
   .main {
     overflow: visible;
@@ -258,6 +239,7 @@ td {
 
   <!-- MAIN -->
   <div class="main">
+
     <div class="hero">
       <h1>Borongan Delivery Hub 🚚</h1>
       <p>Customer Dashboard</p>
@@ -283,17 +265,19 @@ td {
       <tbody id="orderTable"></tbody>
     </table>
 
+    <!-- CUSTOMER DETAILS -->
     <div class="info-frame">
       <div><strong>Customer:</strong> Kiko</div>
       <div><strong>Address:</strong> Barangay E Borongan City</div>
     </div>
 
+    <!-- ACTION BUTTONS -->
     <div class="action-buttons">
-      <button onclick="alert('Confirmed')">Confirm</button>
-      <button onclick="alert('Sent to rider')">Send to Rider</button>
+      <button onclick="confirmOrder()">Confirm</button>
+      <button onclick="sendOrder()">Send to Rider</button>
     </div>
-  </div>
 
+  </div>
 </div>
 
 <script>
@@ -338,8 +322,8 @@ function addOrder() {
   document.getElementById("item").value = "";
   document.getElementById("qty").value = 1;
   document.getElementById("uom").value = "pcs";
-  document.getElementById("uomOther").style.display = "none";
   document.getElementById("uomOther").value = "";
+  document.getElementById("uomOther").style.display = "none";
   document.getElementById("source").value = "";
   document.getElementById("item").focus();
 }
@@ -365,6 +349,14 @@ function removeOrder(i) {
   orders.splice(i, 1);
   renderOrders();
   document.getElementById("item").focus();
+}
+
+function confirmOrder() {
+  alert("Order confirmed!");
+}
+
+function sendOrder() {
+  alert("Order sent to rider!");
 }
 
 function logout() {
