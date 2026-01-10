@@ -8,9 +8,13 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
-* {
+/* ===== CRITICAL LAYOUT FIX ===== */
+html, body {
+  height: 100%;
   margin: 0;
-  padding: 0;
+}
+
+* {
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
@@ -18,12 +22,14 @@
 body {
   background: linear-gradient(135deg, #0d2a3a, #1b4f72);
   color: #eee;
-  min-height: 100vh;
+  overflow: hidden;
 }
 
+/* ===== APP CONTAINER ===== */
 .app {
   display: flex;
-  min-height: 100vh;
+  height: 100%;
+  width: 100%;
 }
 
 /* ===== SIDEBAR ===== */
@@ -61,13 +67,12 @@ body {
   color: #ddd;
 }
 
-/* Qty + UoM */
 .qty-row {
   display: flex;
   gap: 8px;
 }
 
-.qty-row input[type="number"] {
+.qty-row input {
   width: 65px;
   text-align: center;
 }
@@ -80,7 +85,6 @@ body {
   flex: 1;
 }
 
-/* Buttons */
 .sidebar button {
   margin-top: 15px;
   background: linear-gradient(90deg, #00aaff, #0077cc);
@@ -98,7 +102,7 @@ body {
   background: #aa3333;
 }
 
-/* ===== MAIN ===== */
+/* ===== MAIN CONTENT ===== */
 .main {
   flex: 1;
   padding: 30px;
@@ -152,36 +156,16 @@ th {
   cursor: pointer;
 }
 
-/* ===== INFO ===== */
-.info-frame {
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0;
-  padding: 15px;
-  background-color: #0a1f2e;
-  border-radius: 8px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 15px;
-}
-
-.action-buttons button {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #00aaff, #0077cc);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
 /* ===== MOBILE ===== */
 @media (max-width: 768px) {
+  body {
+    overflow: auto;
+  }
+
   .app {
     flex-direction: column;
+    height: auto;
+    min-height: 100%;
   }
 
   .sidebar {
@@ -208,7 +192,6 @@ th {
     <label>Quantity</label>
     <div class="qty-row">
       <input type="number" id="qty" min="1" value="1">
-
       <select id="uom" onchange="handleUomChange()">
         <option value="pcs" selected>pcs</option>
         <option value="order">order</option>
@@ -216,13 +199,7 @@ th {
         <option value="ltr">ltr</option>
         <option value="others">others</option>
       </select>
-
-      <input
-        type="text"
-        id="uomOther"
-        placeholder="specify"
-        style="display:none"
-      >
+      <input id="uomOther" type="text" placeholder="specify" style="display:none">
     </div>
 
     <label>Source</label>
@@ -262,6 +239,16 @@ th {
 </div>
 
 <script>
+/* ===== FORCE REFLOW (MOBILE FIX) ===== */
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.style.display = "none";
+  document.body.offsetHeight;
+  document.body.style.display = "";
+
+  document.getElementById("item").focus();
+});
+
+/* ===== ORDER LOGIC ===== */
 let orders = [];
 
 function handleUomChange() {
@@ -278,22 +265,21 @@ function handleUomChange() {
 }
 
 function addOrder() {
-  const item = item.value.trim();
+  const itemEl = item;
   const qtyVal = qty.value;
   const uomVal = uom.value;
   const otherUom = uomOther.value.trim();
   const src = source.value.trim();
 
-  if (!item || !qtyVal || !src) {
+  if (!itemEl.value.trim() || !qtyVal || !src) {
     alert("Fill all fields");
     return;
   }
 
   let finalUom = uomVal;
-
   if (uomVal === "others") {
     if (!otherUom) {
-      alert("Please specify unit of measure");
+      alert("Specify unit");
       uomOther.focus();
       return;
     }
@@ -301,7 +287,7 @@ function addOrder() {
   }
 
   orders.push({
-    item,
+    item: itemEl.value.trim(),
     qty: qtyVal,
     uom: finalUom,
     source: src
@@ -309,14 +295,14 @@ function addOrder() {
 
   renderOrders();
 
-  item.value = "";
+  itemEl.value = "";
   qty.value = 1;
   uom.value = "pcs";
   uomOther.value = "";
   uomOther.style.display = "none";
   source.value = "";
 
-  item.focus();
+  itemEl.focus();
 }
 
 function renderOrders() {
@@ -343,7 +329,7 @@ function removeOrder(i) {
 
 function logout() {
   localStorage.clear();
-  location.href = "login.html";
+  window.location.replace("login.html");
 }
 </script>
 
