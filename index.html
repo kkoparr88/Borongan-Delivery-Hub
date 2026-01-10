@@ -28,7 +28,7 @@ body {
   height: 100%;
 }
 
-/* ===== SIDEBAR ===== */
+/* SIDEBAR */
 .sidebar {
   width: 320px;
   min-width: 320px;
@@ -39,9 +39,9 @@ body {
 }
 
 .sidebar h2 {
-  margin: 15px 0 10px;
   border-bottom: 2px solid #00aaff;
   padding-bottom: 5px;
+  margin: 15px 0 10px;
 }
 
 .sidebar label {
@@ -54,8 +54,8 @@ body {
 .sidebar textarea,
 .sidebar select {
   width: 100%;
-  padding: 8px;
   margin-top: 5px;
+  padding: 8px;
   border-radius: 6px;
   border: none;
   background: #163545;
@@ -86,17 +86,17 @@ body {
   width: 100%;
   border-radius: 8px;
   border: none;
-  font-weight: 600;
-  cursor: pointer;
   background: linear-gradient(90deg, #00aaff, #0077cc);
   color: white;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .logout {
   background: #aa3333;
 }
 
-/* ===== MAIN ===== */
+/* MAIN */
 .main {
   flex: 1;
   padding: 30px;
@@ -110,7 +110,7 @@ body {
   margin-bottom: 20px;
 }
 
-/* ===== TABLE ===== */
+/* TABLE */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -118,12 +118,6 @@ table {
   border-radius: 8px;
   table-layout: fixed;
 }
-
-col.item { width: 45%; }
-col.qty { width: 8%; }
-col.uom { width: 12%; }
-col.src { width: 25%; }
-col.del { width: 10%; }
 
 th, td {
   padding: 12px;
@@ -142,7 +136,7 @@ th {
   cursor: pointer;
 }
 
-/* ===== INFO BAR ===== */
+/* INFO BAR */
 .info-frame {
   margin: 20px 0;
   padding: 15px;
@@ -152,7 +146,7 @@ th {
   justify-content: space-between;
 }
 
-/* ===== ACTIONS ===== */
+/* ACTIONS */
 .actions {
   display: flex;
   gap: 15px;
@@ -168,12 +162,11 @@ th {
   font-weight: bold;
 }
 
-/* ===== MOBILE ===== */
+/* MOBILE */
 @media (max-width: 768px) {
   .app {
     flex-direction: column;
   }
-
   .sidebar {
     width: 100%;
     min-width: 100%;
@@ -187,7 +180,7 @@ th {
 <body>
 
 <script>
-/* ===== SESSION GUARD ===== */
+/* SESSION GUARD */
 const customer = JSON.parse(localStorage.getItem("customer"));
 if (!customer) {
   window.location.replace("login.html");
@@ -201,13 +194,16 @@ if (!customer) {
   <h2>Customer</h2>
 
   <label>Name</label>
-  <input id="name" disabled>
+  <input id="custName" disabled>
 
   <label>Email</label>
-  <input id="email" disabled>
+  <input id="custEmail" disabled>
+
+  <label>Messenger Profile</label>
+  <input id="custMessenger" disabled>
 
   <label>Address</label>
-  <input id="address" disabled>
+  <input id="custAddress" disabled>
 
   <h2>Order Details</h2>
 
@@ -236,16 +232,12 @@ if (!customer) {
 
 <!-- MAIN -->
 <div class="main">
-
   <div class="hero">
     <h1>Borongan Delivery Hub 🚚</h1>
     <p>Customer Dashboard</p>
   </div>
 
   <table>
-    <colgroup>
-      <col class="item"><col class="qty"><col class="uom"><col class="src"><col class="del">
-    </colgroup>
     <thead>
       <tr>
         <th>Item</th>
@@ -267,41 +259,27 @@ if (!customer) {
     <button onclick="confirmOrder()">Confirm</button>
     <button onclick="sendOrder()">Send to Rider</button>
   </div>
-
 </div>
+
 </div>
 
 <script>
-/* ===== HARD UI INITIALIZATION ===== */
+/* INITIALIZE UI */
 let orders = [];
 
-function initUI() {
-  // Reset runtime state
-  orders = [];
-  orderTable.innerHTML = "";
+document.addEventListener("DOMContentLoaded", () => {
+  custName.value = customer.name || "";
+  custEmail.value = customer.email || "";
+  custMessenger.value = customer.messenger || "";
+  custAddress.value = customer.address || "";
 
-  // Fill customer info
-  name.value = customer.name || "";
-  email.value = customer.email || "";
-  address.value = customer.address || "";
   infoName.textContent = customer.name || "";
   infoAddress.textContent = customer.address || "";
 
-  // Reset inputs
-  item.value = "";
-  qty.value = 1;
-  uom.value = "pcs";
-  uomOther.value = "";
-  uomOther.style.display = "none";
-  source.value = "";
+  item.focus();
+});
 
-  // Focus item
-  setTimeout(() => item.focus(), 0);
-}
-
-document.addEventListener("DOMContentLoaded", initUI);
-
-/* ===== ORDER LOGIC ===== */
+/* ORDER LOGIC */
 function onUomChange() {
   uomOther.style.display = (uom.value === "others") ? "block" : "none";
 }
@@ -321,17 +299,7 @@ function addOrder() {
   });
 
   renderOrders();
-  initInputs();
-}
-
-function initInputs() {
-  item.value = "";
-  qty.value = 1;
-  uom.value = "pcs";
-  uomOther.value = "";
-  uomOther.style.display = "none";
-  source.value = "";
-  item.focus();
+  resetInputs();
 }
 
 function renderOrders() {
@@ -351,6 +319,16 @@ function renderOrders() {
 function removeOrder(i) {
   orders.splice(i, 1);
   renderOrders();
+  item.focus();
+}
+
+function resetInputs() {
+  item.value = "";
+  qty.value = 1;
+  uom.value = "pcs";
+  uomOther.value = "";
+  uomOther.style.display = "none";
+  source.value = "";
   item.focus();
 }
 
