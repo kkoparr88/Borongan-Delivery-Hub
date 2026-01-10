@@ -1,250 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Borongan Delivery Hub</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-
 body {
-  background: linear-gradient(135deg, #0d2a3a, #1b4f72);
-  color: #eee;
-  min-height: 100vh;
-  overflow-y: auto;
-}
-
-/* APP LAYOUT */
-.app {
-  display: flex;
+  margin: 0;
+  font-family: Poppins, sans-serif;
+  background: #0d2a3a;
+  color: #fff;
   min-height: 100vh;
 }
-
-/* SIDEBAR */
-.sidebar {
-  background-color: #0a1f2e;
-  width: 320px;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-/* MAIN */
-.main {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-/* MOBILE FIX */
-@media (max-width: 768px) {
-  .app {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-  }
-}
-
-.sidebar h2 {
-  font-size: 20px;
-  margin-bottom: 15px;
-  border-bottom: 2px solid #00aaff;
-}
-
-.sidebar label {
-  font-size: 14px;
-  margin-top: 10px;
-  display: block;
-}
-
-.sidebar input,
-.sidebar textarea {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border-radius: 6px;
-  border: none;
-  background-color: #163545;
-  color: #ddd;
-}
-
-.sidebar button {
-  margin-top: 15px;
-  background: linear-gradient(90deg, #00aaff, #0077cc);
-  border: none;
-  color: white;
-  font-size: 15px;
-  padding: 12px;
-  width: 100%;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.logout {
-  background: #aa3333;
-}
-
-.hero {
-  background: linear-gradient(90deg, #0f354f, #16629d);
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #0a1f2e;
-  border-radius: 8px;
-}
-
-th, td {
-  padding: 12px;
-  border-bottom: 1px solid #004d87;
-}
-
-th {
-  background-color: #003a65;
-}
-
-.info-frame {
-  margin: 20px 0;
-  padding: 15px;
-  background-color: #0a1f2e;
-  border-radius: 8px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 15px;
-}
-
-.action-buttons button {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #00aaff, #0077cc);
-  color: white;
-  font-weight: bold;
-}
+button { padding: 12px; margin-top: 15px; }
 </style>
-</head>
-
-<body>
-
-<div class="app">
-
-  <div class="sidebar">
-    <h2>Customer Details</h2>
-
-    <label>Name</label>
-    <input id="name" disabled>
-
-    <label>Contact</label>
-    <input id="contact" disabled>
-
-    <label>Messenger</label>
-    <input id="messenger" disabled>
-
-    <label>Address</label>
-    <input id="location" disabled>
-
-    <button class="logout" onclick="logout()">Logout</button>
-
-    <h2 style="margin-top:30px">Order</h2>
-
-    <label>Item</label>
-    <textarea id="item"></textarea>
-
-    <label>Qty</label>
-    <input type="number" id="qty">
-
-    <label>Source</label>
-    <input id="source">
-
-    <button onclick="addOrder()">Add Order</button>
-  </div>
-
-  <div class="main">
-    <div class="hero">
-      <h1>Borongan Delivery Hub</h1>
-      <p>Customer Dashboard</p>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Qty</th>
-          <th>Source</th>
-        </tr>
-      </thead>
-      <tbody id="orderTable"></tbody>
-    </table>
-
-    <div class="info-frame">
-      <strong id="infoName"></strong><br>
-      <span id="infoLocation"></span>
-    </div>
-
-    <div class="action-buttons">
-      <button onclick="confirmOrder()">Confirm</button>
-      <button onclick="sendOrder()">Send</button>
-    </div>
-  </div>
-
-</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const customer = JSON.parse(localStorage.getItem("customer"));
 
   if (!customer) {
-    history.replaceState(null, "", "login.html");
-    window.location.replace("./");
-
+    window.location.replace("login.html");
     return;
   }
 
-  document.getElementById("name").value = customer.name;
-  document.getElementById("contact").value = customer.contact;
-  document.getElementById("messenger").value = customer.messenger || "";
-  document.getElementById("location").value = customer.address;
-
-  document.getElementById("infoName").textContent = customer.name;
-  document.getElementById("infoLocation").textContent = customer.address;
+  document.getElementById("welcome").textContent =
+    "Welcome, " + customer.name;
 });
 
-let orders = [];
-
-function addOrder() {
-  const item = document.getElementById("item").value;
-  const qty = document.getElementById("qty").value;
-  const source = document.getElementById("source").value;
-
-  if (!item || !qty || !source) return alert("Fill all fields");
-
-  orders.push({ item, qty, source });
-  renderOrders();
-
-  document.getElementById("item").value = "";
-  document.getElementById("qty").value = "";
-  document.getElementById("source").value = "";
+function logout() {
+  localStorage.removeItem("customer");
+  window.location.replace("login.html");
 }
+</script>
+</head>
 
-function renderOrders() {
-  const table = document.getElementById("orderTable");
-  table.innerHTML = "";
-  orders.forEach(o => {
-    table.innerHTML += `<tr><td>${o.item}</td><td>${o.qty}</td><td>${o.source}</td></tr>`;
+<body>
+<h1 id="welcome"></h1>
 
+<button onclick="logout()">Logout</button>
+</body>
+</html>
