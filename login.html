@@ -17,7 +17,7 @@
 
     body {
       background: linear-gradient(135deg, #0d2a3a, #1b4f72);
-      min-height: 100vh;
+      min-height: 100vh;            /* mobile-safe */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -117,7 +117,9 @@
   </div>
 
 <script>
-const SCRIPT_URL = "PASTE YOUR /exec URL HERE";
+/* Your verified working Apps Script URL */
+const SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbzKNZykX5pLbNdjkTZu1brXY8LcovIhxATQpjlJpmEwOoWS0kflxGAhrHHsmFINzkxT/exec";
 
 function login() {
   const errorBox = document.getElementById("error");
@@ -133,27 +135,28 @@ function login() {
 
   fetch(SCRIPT_URL, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       action: "login",
       email: email,
       password: password
     })
   })
-  .then(res => res.text())
-  .then(text => {
-    const data = JSON.parse(text);
-
+  .then(res => res.json())
+  .then(data => {
     if (data.success) {
       localStorage.setItem("customer", JSON.stringify(data.customer));
 
-      /* ✅ ONLY FIX THAT MATTERS */
-      window.location.replace("./");   // loads index.html
+      /* GitHub Pages project-site safe */
+      window.location.replace("./");
     } else {
       errorBox.textContent = data.message;
     }
   })
-  .catch(() => {
-    errorBox.textContent = "Network error.";
+  .catch(err => {
+    errorBox.textContent = "Network error. Please try again.";
   });
 }
 </script>
