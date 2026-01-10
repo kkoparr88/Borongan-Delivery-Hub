@@ -21,24 +21,25 @@ body {
   min-height: 100vh;
 }
 
-/* LAYOUT */
+/* ===== LAYOUT ===== */
 .app {
   display: flex;
   min-height: 100vh;
 }
 
-/* SIDEBAR */
+/* ===== SIDEBAR ===== */
 .sidebar {
-  width: 300px;
-  background-color: #0a1f2e;
+  width: 280px;                 /* FIXED width */
+  min-width: 280px;
+  background-color: #081a27;
   padding: 20px;
-  overflow-y: auto;
+  border-right: 2px solid #00aaff;
 }
 
 .sidebar h2 {
   margin-bottom: 15px;
-  border-bottom: 2px solid #00aaff;
   padding-bottom: 5px;
+  border-bottom: 2px solid #00aaff;
 }
 
 .sidebar p {
@@ -46,7 +47,18 @@ body {
   font-size: 14px;
 }
 
-/* MAIN */
+.logout {
+  background: #aa3333;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+/* ===== MAIN ===== */
 .main {
   flex: 1;
   padding: 30px;
@@ -60,22 +72,7 @@ body {
   margin-bottom: 20px;
 }
 
-button {
-  padding: 12px 18px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #00aaff, #0077cc);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.logout {
-  background: #aa3333;
-  margin-top: 20px;
-}
-
-/* MOBILE */
+/* ===== MOBILE ===== */
 @media (max-width: 768px) {
   .app {
     flex-direction: column;
@@ -83,6 +80,9 @@ button {
 
   .sidebar {
     width: 100%;
+    min-width: 100%;
+    border-right: none;
+    border-bottom: 2px solid #00aaff;
   }
 }
 </style>
@@ -101,7 +101,7 @@ button {
     <button class="logout" onclick="logout()">Logout</button>
   </div>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN -->
   <div class="main">
     <div class="card">
       <h1>Welcome to Borongan Delivery Hub</h1>
@@ -121,9 +121,7 @@ button {
 </div>
 
 <script>
-/* ===============================
-   SESSION CHECK
-   =============================== */
+/* ===== SESSION CHECK ===== */
 document.addEventListener("DOMContentLoaded", () => {
   let customer;
 
@@ -138,14 +136,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Populate UI
   document.getElementById("name").textContent = customer.name;
   document.getElementById("email").textContent = customer.email;
 });
 
-/* ===============================
-   LOGOUT
-   =============================== */
+/* ===== LOGOUT ===== */
 function logout() {
   localStorage.removeItem("customer");
   window.location.replace("login.html");
