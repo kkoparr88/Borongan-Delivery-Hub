@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Borongan Delivery Hub | Login</title>
-
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
     * { box-sizing: border-box; margin:0; padding:0; font-family:'Poppins', sans-serif; }
@@ -19,7 +18,6 @@
     .error { margin-top:12px; font-size:14px; color:#ff8080; text-align:center; min-height:18px; }
   </style>
 </head>
-
 <body>
   <div class="login-box">
     <h2>Customer Login</h2>
@@ -57,17 +55,15 @@ function login() {
 
   const xhr = new XMLHttpRequest();
   xhr.open("POST", SCRIPT_URL, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
 
   xhr.onload = function () {
     try {
       const data = JSON.parse(xhr.responseText);
-
       if (data.success) {
-        // Login successful
         localStorage.setItem("customer", JSON.stringify(data.customer));
-        window.location.replace("./"); // redirect to home
+        window.location.replace("./");
       } else {
-        // Pending or invalid
         errorBox.textContent = data.message;
       }
     } catch (e) {
