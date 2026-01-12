@@ -1,43 +1,36 @@
 <script>
-  // Your provided Web App URL
+  // Your Web App URL
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIS7vSXAQq8YR1Tqnm1EmFKOMMM0cWxy7bRww06slWJv39vsBxr87F0NP0xbU_uWhj/exec";
 
   function signup() {
     const errorDiv = document.getElementById("error");
+    const btn = document.querySelector("button");
+    
     errorDiv.textContent = "";
-    errorDiv.style.color = "#ff8080";
 
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const messenger = document.getElementById("messenger").value.trim();
-    const contact = document.getElementById("contact").value.trim();
-    const address = document.getElementById("address").value.trim();
-    const password = document.getElementById("password").value.trim();
+    // Get values from your specific IDs
+    const payload = {
+      name: document.getElementById("name").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      messenger: document.getElementById("messenger").value.trim(),
+      phone: document.getElementById("contact").value.trim(),
+      address: document.getElementById("address").value.trim(),
+      password: document.getElementById("password").value.trim()
+    };
 
-    // 1. Validation
-    if (!name || !email || !messenger || !contact || !address || !password) {
+    // Validation
+    if (!payload.name || !payload.email || !payload.messenger || !payload.phone || !payload.address || !payload.password) {
       errorDiv.textContent = "Please fill in all fields.";
       return;
     }
 
-    // 2. Prepare Data (Matching the Apps Script names)
-    const payload = {
-      name: name,
-      email: email,
-      messenger: messenger,
-      phone: contact,
-      address: address,
-      password: password
-    };
-
-    const btn = document.querySelector("button");
     btn.disabled = true;
     btn.innerText = "Processing...";
 
-    // 3. Submit to Google Sheets
+    // Use a simple fetch that doesn't try to "read" the response
     fetch(SCRIPT_URL, {
       method: "POST",
-      mode: "no-cors", // Required for Apps Script POST
+      mode: "no-cors", // This tells the browser: "Just send it, don't worry about the answer"
       cache: "no-cache",
       headers: {
         "Content-Type": "text/plain"
@@ -45,13 +38,14 @@
       body: JSON.stringify(payload)
     })
     .then(() => {
-      // In no-cors mode, we assume success if the fetch finishes
-      alert("Registration submitted! Your account is pending manual approval (Status: 0).");
+      // Because of 'no-cors', we don't wait for data. 
+      // If fetch finishes without an error, the data was sent.
+      alert("Registration Successful! Your account is now pending for admin review.");
       window.location.href = "login.html";
     })
     .catch((err) => {
       console.error(err);
-      errorDiv.textContent = "Connection error. Please try again.";
+      errorDiv.textContent = "Submission failed. Check your internet.";
       btn.disabled = false;
       btn.innerText = "Sign Up";
     });
