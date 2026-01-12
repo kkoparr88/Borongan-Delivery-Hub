@@ -377,6 +377,52 @@ function logout() {
   localStorage.clear();
   window.location.replace("login.html");
 }
+
+/* ================== NEW: Load customer info dynamically ================== */
+
+function loadCustomerInfo() {
+  const email = localStorage.getItem("loggedInUserEmail");
+  if (!email) {
+    console.warn("No logged-in user email found in localStorage.");
+    return;
+  }
+
+  // REPLACE with your actual deployed Apps Script Web App URL:
+  const webAppUrl = "https://script.google.com/macros/s/AKfycbzIS7vSXAQq8YR1Tqnm1EmFKOMMM0cWxy7bRww06slWJv39vsBxr87F0NP0xbU_uWhj/exec";
+
+  fetch(`${webAppUrl}?email=${encodeURIComponent(email)}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        const customer = data.customer;
+
+        // Update Sidebar inputs (name, email, address)
+        const custNameInput = document.getElementById("custName");
+        const custEmailInput = document.getElementById("custEmail");
+        const custAddressTextarea = document.getElementById("custAddress");
+
+        if (custNameInput) custNameInput.value = customer.name || "";
+        if (custEmailInput) custEmailInput.value = customer.email || "";
+        if (custAddressTextarea) custAddressTextarea.value = customer.address || "";
+
+        // Update customer summary info bar
+        const infoFrame = document.querySelector(".info-frame");
+        if (infoFrame) {
+          const divs = infoFrame.querySelectorAll("div");
+          if (divs.length >= 2) {
+            divs[0].innerHTML = `<strong>Customer:</strong> ${customer.name || ""}`;
+            divs[1].innerHTML = `<strong>Address:</strong> ${customer.address || ""}`;
+          }
+        }
+      } else {
+        console.error("Customer data not found or error:", data.message);
+      }
+    })
+    .catch(err => console.error("Failed to fetch customer info:", err));
+}
+
+window.addEventListener("load", loadCustomerInfo);
+
 </script>
 
 </body>
