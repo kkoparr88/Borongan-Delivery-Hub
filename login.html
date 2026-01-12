@@ -100,7 +100,7 @@
 <script>
 /**
  * 🛠️ CONFIGURATION
- * Use your LATEST 'Anyone' deployment URL from Google Apps Script
+ * Make sure your Apps Script is deployed as "Anyone"
  */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWkMx1AiGjOmiFe7QFWnzJkiQSjb4ZtJGlOoJhJgcXaB0tDDQ0G0kTmH_F7u5LcB4F/exec";
 
@@ -115,21 +115,16 @@ function login() {
     return;
   }
 
-  // UI Feedback
   loginBtn.disabled = true;
   loginBtn.innerText = "Authenticating...";
   errorBox.style.color = "#aad4ff";
   errorBox.textContent = "Connecting to server...";
 
-  /**
-   * JSONP TECHNIQUE
-   * This bypasses the 'Network Error' CORS block by loading the response 
-   * as a script tag rather than a data fetch.
-   */
+  // Using JSONP callback to bypass CORS "Network Error"
   const callbackName = 'googleDocCallback';
   
   window[callbackName] = function(data) {
-    // Cleanup
+    // Cleanup script tag
     delete window[callbackName];
     const oldScript = document.getElementById('jsonp-script');
     if (oldScript) oldScript.remove();
@@ -138,12 +133,14 @@ function login() {
       errorBox.style.color = "#80ff80";
       errorBox.textContent = "Success! Redirecting...";
       
-      // Save user to LocalStorage
+      // Save user to LocalStorage for use in index.html
       localStorage.setItem("customer", JSON.stringify(data.customer));
       
-      // Redirect to index.html or your actual dashboard
       setTimeout(() => {
-        window.location.href = "index.html"; 
+        // Safe redirect that works on GitHub Pages
+        const path = window.location.pathname;
+        const directory = path.substring(0, path.lastIndexOf('/'));
+        window.location.href = directory + "/index.html"; 
       }, 1000);
     } else {
       loginBtn.disabled = false;
@@ -153,23 +150,21 @@ function login() {
     }
   };
 
-  // Inject the request script
   const script = document.createElement('script');
   script.id = 'jsonp-script';
   script.src = `${SCRIPT_URL}?callback=${callbackName}&action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
   
-  // Handle Script Load Errors
   script.onerror = function() {
     loginBtn.disabled = false;
     loginBtn.innerText = "Login";
     errorBox.style.color = "#ff8080";
-    errorBox.textContent = "Network Error. Please verify deployment settings.";
+    errorBox.textContent = "Network error. Is the script deployed as 'Anyone'?";
   };
 
   document.body.appendChild(script);
 }
 
-// Press Enter to Login
+// Enable Login via "Enter" key
 document.addEventListener('keypress', function (e) {
   if (e.key === 'Enter') login();
 });
