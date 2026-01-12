@@ -41,7 +41,7 @@
   </div>
 
 <script>
-const SCRIPT_URL = "YOUR_DEPLOYED_WEB_APP_URL";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWkMx1AiGjOmiFe7QFWnzJkiQSjb4ZtJGlOoJhJgcXaB0tDDQ0G0kTmH_F7u5LcB4F/exec";
 
 function login() {
   const errorBox = document.getElementById("error");
@@ -61,19 +61,22 @@ function login() {
   xhr.onload = function () {
     try {
       const data = JSON.parse(xhr.responseText);
+
       if (data.success) {
+        // Login successful
         localStorage.setItem("customer", JSON.stringify(data.customer));
-        window.location.replace("./");
+        window.location.replace("./"); // redirect to home
       } else {
+        // Pending or invalid
         errorBox.textContent = data.message;
       }
-    } catch(e) {
+    } catch (e) {
       errorBox.textContent = "Invalid server response.";
     }
   };
 
   xhr.onerror = function () {
-    errorBox.textContent = "Network error.";
+    errorBox.textContent = "Network error. Please try again.";
   };
 
   xhr.send(JSON.stringify({
