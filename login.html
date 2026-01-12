@@ -12,10 +12,10 @@
     .login-box h2 { text-align:center; margin-bottom:25px; font-weight:600; font-size:24px; }
     .input-group { margin-bottom:18px; display:flex; flex-direction:column; }
     .input-group label { margin-bottom:6px; font-size:14px; color:#aad4ff; }
-    input { padding:12px; font-size:15px; border-radius:6px; border: 1px solid #1b4f72; background-color:#163545; color:#fff; outline: none; }
+    input { padding:12px; font-size:15px; border-radius:6px; border: 1px solid #1b4f72; background-color:#163545; color:#fff; outline: none; width: 100%; }
     input:focus { border-color: #00aaff; }
     button { width:100%; padding:12px; background: linear-gradient(90deg, #00aaff, #0077cc); border:none; border-radius:8px; color:white; font-weight:600; cursor:pointer; margin-top:10px; }
-    button:disabled { opacity: 0.5; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
     .signup-btn { margin-top:15px; background: transparent; border:2px solid #00aaff; color:#00aaff; }
     .error { margin-top:15px; font-size:14px; color:#ff8080; text-align:center; min-height:20px; }
   </style>
@@ -38,6 +38,7 @@
   </div>
 
 <script>
+// Your Apps Script URL
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWkMx1AiGjOmiFe7QFWnzJkiQSjb4ZtJGlOoJhJgcXaB0tDDQ0G0kTmH_F7u5LcB4F/exec";
 
 function login() {
@@ -54,7 +55,7 @@ function login() {
   loginBtn.disabled = true;
   loginBtn.innerText = "Authenticating...";
   errorBox.style.color = "#aad4ff";
-  errorBox.textContent = "Connecting to server...";
+  errorBox.textContent = "Connecting to Borongan Hub...";
 
   const callbackName = 'googleDocCallback';
   window[callbackName] = function(data) {
@@ -65,13 +66,16 @@ function login() {
     if (data.success) {
       errorBox.style.color = "#80ff80";
       errorBox.textContent = "Success! Redirecting...";
+      
+      // Save user to LocalStorage
       localStorage.setItem("customer", JSON.stringify(data.customer));
       
       setTimeout(() => {
-        // GITHUB PAGES 404 FIX:
-        // Redirects to current repository folder + index.html
-        const base = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
-        window.location.href = base + "/index.html";
+        /** * FIXING THE 404: 
+         * Instead of an absolute path, we use a relative path './' 
+         * which stays inside the Borongan-Delivery-Hub folder.
+         */
+        window.location.href = "./index.html"; 
       }, 1000);
     } else {
       loginBtn.disabled = false;
@@ -87,6 +91,7 @@ function login() {
   document.body.appendChild(script);
 }
 
+// Enter key support
 document.addEventListener('keypress', (e) => { if (e.key === 'Enter') login(); });
 </script>
 </body>
