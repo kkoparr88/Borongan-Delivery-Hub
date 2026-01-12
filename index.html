@@ -383,7 +383,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const customer = JSON.parse(localStorage.getItem("customer") || "{}");
   if (!customer.email) return;
 
-  const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyO2OmnYBs70O54khgIQO6I5BYtmV9keh8mKXsL8qXuIRraIhJkmJRAw0VsbF22YaeV/exec";
 
   fetch(`${SCRIPT_URL}?email=${encodeURIComponent(customer.email)}`)
     .then(res => res.json())
@@ -403,3 +403,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </body>
 </html>
+
