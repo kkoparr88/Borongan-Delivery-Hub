@@ -129,6 +129,7 @@ function login() {
 
   const xhr = new XMLHttpRequest();
   xhr.open("POST", SCRIPT_URL, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
 
   xhr.onload = function () {
     try {
@@ -146,7 +147,7 @@ function login() {
   };
 
   xhr.onerror = function () {
-    errorBox.textContent = "Network error.";
+    errorBox.textContent = "Network error. Please try again.";
   };
 
   xhr.send(JSON.stringify({
