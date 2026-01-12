@@ -5,82 +5,172 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Borongan Delivery Hub | Login</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    
     * { box-sizing: border-box; margin:0; padding:0; font-family:'Poppins', sans-serif; }
-    body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); min-height:100vh; display:flex; justify-content:center; align-items:center; color:#fff; }
-    .login-box { background-color:#0a1f2e; padding:30px 35px; border-radius:12px; width:320px; box-shadow:0 4px 15px rgba(0,170,255,0.3); }
-    .login-box h2 { text-align:center; margin-bottom:25px; font-weight:600; font-size:24px; }
+    
+    body { 
+      background: linear-gradient(135deg, #0d2a3a, #1b4f72); 
+      min-height:100vh; 
+      display:flex; 
+      justify-content:center; 
+      align-items:center; 
+      color:#fff; 
+    }
+
+    .login-box { 
+      background-color:#0a1f2e; 
+      padding:35px; 
+      border-radius:12px; 
+      width:100%;
+      max-width:350px; 
+      box-shadow:0 8px 24px rgba(0,0,0,0.5), 0 0 10px rgba(0,170,255,0.2); 
+    }
+
+    .login-box h2 { text-align:center; margin-bottom:25px; font-weight:600; font-size:24px; color: #fff; }
+
     .input-group { margin-bottom:18px; display:flex; flex-direction:column; }
     .input-group label { margin-bottom:6px; font-size:14px; color:#aad4ff; }
-    input[type="email"], input[type="password"] { padding:10px 12px; font-size:15px; border-radius:6px; border:none; background-color:#163545; color:#ddd; }
-    button { width:100%; padding:12px; background: linear-gradient(90deg, #00aaff, #0077cc); border:none; border-radius:8px; color:white; font-weight:600; font-size:16px; cursor:pointer; margin-top:10px; }
-    .signup-btn { margin-top:15px; background:#0a1f2e; border:2px solid #00aaff; color:#00aaff; }
-    .error { margin-top:12px; font-size:14px; color:#ff8080; text-align:center; min-height:18px; }
+
+    input[type="email"], input[type="password"] { 
+      padding:12px; 
+      font-size:15px; 
+      border-radius:6px; 
+      border: 1px solid #1b4f72;
+      background-color:#163545; 
+      color:#fff; 
+      outline: none;
+    }
+
+    input:focus { border-color: #00aaff; }
+
+    button { 
+      width:100%; 
+      padding:12px; 
+      background: linear-gradient(90deg, #00aaff, #0077cc); 
+      border:none; 
+      border-radius:8px; 
+      color:white; 
+      font-weight:600; 
+      font-size:16px; 
+      cursor:pointer; 
+      margin-top:10px; 
+      transition: opacity 0.3s;
+    }
+
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .signup-btn { 
+      margin-top:15px; 
+      background: transparent; 
+      border:2px solid #00aaff; 
+      color:#00aaff; 
+    }
+
+    .error { 
+      margin-top:15px; 
+      font-size:14px; 
+      color:#ff8080; 
+      text-align:center; 
+      min-height:20px; 
+    }
   </style>
 </head>
 <body>
+
   <div class="login-box">
     <h2>Customer Login</h2>
 
     <div class="input-group">
-      <label>Email</label>
-      <input id="email" type="email" />
+      <label>Email Address</label>
+      <input id="email" type="email" placeholder="example@mail.com" required />
     </div>
 
     <div class="input-group">
       <label>Password</label>
-      <input id="password" type="password" />
+      <input id="password" type="password" placeholder="••••••••" required />
     </div>
 
-    <button onclick="login()">Login</button>
-    <button class="signup-btn" onclick="location.href='signup.html'">Sign Up</button>
+    <button id="loginBtn" onclick="login()">Login</button>
+    <button class="signup-btn" onclick="location.href='signup.html'">Create Account</button>
 
     <div id="error" class="error"></div>
   </div>
 
 <script>
+/**
+ * 🛠️ CONFIGURATION
+ * Replace the URL below with your LATEST Deployment URL from Apps Script
+ */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWkMx1AiGjOmiFe7QFWnzJkiQSjb4ZtJGlOoJhJgcXaB0tDDQ0G0kTmH_F7u5LcB4F/exec";
 
-function login() {
+async function login() {
   const errorBox = document.getElementById("error");
-  errorBox.textContent = "";
-
+  const loginBtn = document.getElementById("loginBtn");
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
+  // Reset UI
+  errorBox.textContent = "";
   if (!email || !password) {
-    errorBox.textContent = "Please enter both email and password.";
+    errorBox.textContent = "Please fill in all fields.";
     return;
   }
 
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", SCRIPT_URL, true);
-  xhr.setRequestHeader("Content-Type", "application/json");
+  // Loading State
+  loginBtn.disabled = true;
+  loginBtn.innerText = "Authenticating...";
+  errorBox.style.color = "#aad4ff";
+  errorBox.textContent = "Connecting to Borongan Hub...";
 
-  xhr.onload = function () {
-    try {
-      const data = JSON.parse(xhr.responseText);
-      if (data.success) {
-        localStorage.setItem("customer", JSON.stringify(data.customer));
-        window.location.replace("./");
-      } else {
-        errorBox.textContent = data.message;
-      }
-    } catch (e) {
-      errorBox.textContent = "Invalid server response.";
+  try {
+    /**
+     * Using GET request with URL parameters.
+     * This is the most reliable way to avoid 'Network Error' with Google Apps Script.
+     */
+    const finalUrl = `${SCRIPT_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+    
+    const response = await fetch(finalUrl);
+    
+    if (!response.ok) throw new Error("Network response was not ok");
+    
+    const data = await response.json();
+
+    if (data.success) {
+      errorBox.style.color = "#80ff80";
+      errorBox.textContent = "Login Successful! Redirecting...";
+      
+      // Save user data to browser storage
+      localStorage.setItem("customer", JSON.stringify(data.customer));
+      
+      // Redirect to your main app page
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1000);
+      
+    } else {
+      loginBtn.disabled = false;
+      loginBtn.innerText = "Login";
+      errorBox.style.color = "#ff8080";
+      errorBox.textContent = data.message;
     }
-  };
 
-  xhr.onerror = function () {
-    errorBox.textContent = "Network error. Please try again.";
-  };
-
-  xhr.send(JSON.stringify({
-    action: "login",
-    email: email,
-    password: password
-  }));
+  } catch (error) {
+    console.error("Login Error:", error);
+    loginBtn.disabled = false;
+    loginBtn.innerText = "Login";
+    errorBox.style.color = "#ff8080";
+    errorBox.textContent = "Network Error. Please check your internet or script deployment.";
+  }
 }
+
+// Allow "Enter" key to trigger login
+document.addEventListener('keypress', function (e) {
+  if (e.key === 'Enter') {
+    login();
+  }
+});
 </script>
+
 </body>
 </html>
