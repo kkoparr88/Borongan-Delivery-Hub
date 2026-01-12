@@ -1,108 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Borongan Delivery Hub | Login</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-    
-    * { box-sizing: border-box; margin:0; padding:0; font-family:'Poppins', sans-serif; }
-    
-    body { 
-      background: linear-gradient(135deg, #0d2a3a, #1b4f72); 
-      min-height:100vh; 
-      display:flex; 
-      justify-content:center; 
-      align-items:center; 
-      color:#fff; 
-    }
-
-    .login-box { 
-      background-color:#0a1f2e; 
-      padding:35px; 
-      border-radius:12px; 
-      width:100%;
-      max-width:350px; 
-      box-shadow:0 8px 24px rgba(0,0,0,0.5); 
-      border: 1px solid rgba(0,170,255,0.1);
-    }
-
-    .login-box h2 { text-align:center; margin-bottom:25px; font-weight:600; font-size:24px; }
-
-    .input-group { margin-bottom:18px; display:flex; flex-direction:column; }
-    .input-group label { margin-bottom:6px; font-size:14px; color:#aad4ff; }
-
-    input[type="email"], input[type="password"] { 
-      padding:12px; 
-      font-size:15px; 
-      border-radius:6px; 
-      border: 1px solid #1b4f72;
-      background-color:#163545; 
-      color:#fff; 
-      outline: none;
-      width: 100%;
-    }
-
-    input:focus { border-color: #00aaff; }
-
-    button { 
-      width:100%; 
-      padding:12px; 
-      background: linear-gradient(90deg, #00aaff, #0077cc); 
-      border:none; 
-      border-radius:8px; 
-      color:white; 
-      font-weight:600; 
-      font-size:16px; 
-      cursor:pointer; 
-      margin-top:10px; 
-    }
-
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .signup-btn { 
-      margin-top:15px; 
-      background: transparent; 
-      border:2px solid #00aaff; 
-      color:#00aaff; 
-    }
-
-    .error { 
-      margin-top:15px; 
-      font-size:14px; 
-      color:#ff8080; 
-      text-align:center; 
-      min-height:20px; 
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Borongan Delivery Hub | Login</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+* { box-sizing: border-box; margin:0; padding:0; font-family:'Poppins', sans-serif; }
+body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); min-height:100vh; display:flex; justify-content:center; align-items:center; color:#fff; }
+.login-box { background-color:#0a1f2e; padding:35px; border-radius:12px; width:100%; max-width:350px; box-shadow:0 8px 24px rgba(0,0,0,0.5); border: 1px solid rgba(0,170,255,0.1);}
+.login-box h2 { text-align:center; margin-bottom:25px; font-weight:600; font-size:24px; }
+.input-group { margin-bottom:18px; display:flex; flex-direction:column; }
+.input-group label { margin-bottom:6px; font-size:14px; color:#aad4ff; }
+input[type="email"], input[type="password"] { padding:12px; font-size:15px; border-radius:6px; border: 1px solid #1b4f72; background-color:#163545; color:#fff; outline: none; width: 100%; }
+input:focus { border-color: #00aaff; }
+button { width:100%; padding:12px; background: linear-gradient(90deg, #00aaff, #0077cc); border:none; border-radius:8px; color:white; font-weight:600; font-size:16px; cursor:pointer; margin-top:10px; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.signup-btn { margin-top:15px; background: transparent; border:2px solid #00aaff; color:#00aaff; }
+.error { margin-top:15px; font-size:14px; color:#ff8080; text-align:center; min-height:20px; }
+</style>
 </head>
 <body>
 
-  <div class="login-box">
-    <h2>Customer Login</h2>
+<div class="login-box">
+  <h2>Customer Login</h2>
 
-    <div class="input-group">
-      <label>Email Address</label>
-      <input id="email" type="email" placeholder="example@mail.com" />
-    </div>
-
-    <div class="input-group">
-      <label>Password</label>
-      <input id="password" type="password" placeholder="••••••••" />
-    </div>
-
-    <button id="loginBtn" onclick="login()">Login</button>
-    <button class="signup-btn" onclick="location.href='signup.html'">Create Account</button>
-
-    <div id="error" class="error"></div>
+  <div class="input-group">
+    <label>Email Address</label>
+    <input id="email" type="email" placeholder="example@mail.com" />
   </div>
 
+  <div class="input-group">
+    <label>Password</label>
+    <input id="password" type="password" placeholder="••••••••" />
+  </div>
+
+  <button id="loginBtn" onclick="login()">Login</button>
+  <button class="signup-btn" onclick="location.href='signup.html'">Create Account</button>
+
+  <div id="error" class="error"></div>
+</div>
+
 <script>
-/**
- * 🛠️ SCRIPT URL - UPDATED VERSION
- */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIS7vSXAQq8YR1Tqnm1EmFKOMMM0cWxy7bRww06slWJv39vsBxr87F0NP0xbU_uWhj/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
 
 function login() {
   const errorBox = document.getElementById("error");
@@ -115,16 +55,13 @@ function login() {
     return;
   }
 
-  // UI State
   loginBtn.disabled = true;
   loginBtn.innerText = "Authenticating...";
   errorBox.style.color = "#aad4ff";
   errorBox.textContent = "Connecting to Borongan Hub...";
 
-  // JSONP Callback logic
   const callbackName = 'googleDocCallback';
   
-  // Timeout protection
   const timeoutId = setTimeout(() => {
     if (loginBtn.disabled) {
       loginBtn.disabled = false;
@@ -143,14 +80,8 @@ function login() {
     if (data.success) {
       errorBox.style.color = "#80ff80";
       errorBox.textContent = "Success! Redirecting...";
-      
-      // Store user data
       localStorage.setItem("customer", JSON.stringify(data.customer));
-      
-      setTimeout(() => {
-        // Relative path to avoid 404 on GitHub Pages
-        window.location.href = "./index.html"; 
-      }, 1000);
+      setTimeout(() => { window.location.href = "./index.html"; }, 1000);
     } else {
       loginBtn.disabled = false;
       loginBtn.innerText = "Login";
@@ -159,11 +90,9 @@ function login() {
     }
   };
 
-  // Inject Script
   const script = document.createElement('script');
   script.id = 'jsonp-script';
-  script.src = `${SCRIPT_URL}?callback=${callbackName}&action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
-  
+  script.src = `${SCRIPT_URL}?callback=${callbackName}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
   script.onerror = function() {
     clearTimeout(timeoutId);
     loginBtn.disabled = false;
@@ -171,11 +100,9 @@ function login() {
     errorBox.style.color = "#ff8080";
     errorBox.textContent = "Network error. Make sure the script is deployed as 'Anyone'.";
   };
-
   document.body.appendChild(script);
 }
 
-// Enter Key Handler
 document.addEventListener('keypress', (e) => { if (e.key === 'Enter') login(); });
 </script>
 
