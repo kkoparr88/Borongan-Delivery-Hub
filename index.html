@@ -5,14 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Borongan Delivery Hub</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; overflow-y: auto; }
 .app { display: flex; min-height: 100vh; }
-
-/* SIDEBAR */
 .sidebar { background-color: #0a1f2e; width: 320px; min-width: 320px; padding: 20px 25px; border-right: 2px solid #00aaff; }
 .sidebar h2 { font-size: 20px; margin-bottom: 12px; border-bottom: 2px solid #00aaff; padding-bottom: 5px; }
 .sidebar label { font-size: 14px; margin-top: 10px; display: block; }
@@ -20,42 +17,22 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; overf
 .qty-row { display: flex; gap: 8px; }
 .qty-row input { width: 70px; text-align: center; }
 .sidebar button { margin-top: 15px; background: linear-gradient(90deg, #00aaff, #0077cc); border: none; color: white; font-size: 15px; font-weight: 600; padding: 12px 0; width: 100%; border-radius: 8px; cursor: pointer; }
-.logout { background: #aa3333; }
-
-/* MAIN CONTENT */
 .main { flex: 1; padding: 30px; }
 .hero { background: linear-gradient(90deg, #0f354f, #16629d); padding: 30px; border-radius: 12px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-
-/* TABLE */
 table { width: 100%; border-collapse: collapse; background-color: #0a1f2e; border-radius: 8px; table-layout: fixed; }
-col.col-item { width: 40%; }
-col.col-qty  { width: 10%; }
-col.col-uom  { width: 15%; }
-col.col-src  { width: 25%; }
-col.col-del  { width: 10%; }
 th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle; text-align: left; }
-.col-qty, .col-uom, .col-del { text-align: center; }
 .del-btn { background: none; border: none; color: #ff4d4d; font-size: 20px; cursor: pointer; }
-
-/* INFO FRAME GRID */
 .info-frame { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; padding: 20px; background-color: #0a1f2e; border-radius: 8px; border-left: 4px solid #00aaff; }
 .cost-label { color: #00aaff; font-weight: bold; }
-
-/* ADDRESS MODAL */
 #addressOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
 .address-card { background: #0a1f2e; padding: 30px; border-radius: 15px; border: 2px solid #00aaff; width: 350px; text-align: center; }
-.address-card select { width: 100%; padding: 12px; margin: 10px 0; background: #163545; border: 1px solid #00aaff; color: white; border-radius: 8px; }
-
-/* DRAWER */
-.drawer { position: fixed; right: -450px; top: 0; width: 400px; height: 100%; background: #0a1f2e; transition: 0.5s; z-index: 3000; padding: 25px; border-left: 3px solid #00aaff; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
+.drawer { position: fixed; right: -450px; top: 0; width: 400px; height: 100%; background: #0a1f2e; transition: 0.5s; z-index: 3000; padding: 25px; border-left: 3px solid #00aaff; }
 .drawer.active { right: 0; }
 .notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; }
-
 .action-buttons { display: flex; gap: 15px; }
 .action-buttons button { flex: 1; padding: 14px; border: none; border-radius: 8px; background: linear-gradient(90deg, #00aaff, #0077cc); color: white; font-weight: bold; cursor: pointer; }
 </style>
 </head>
-
 <body>
 
 <div id="addressOverlay">
@@ -70,11 +47,8 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
 </div>
 
 <div id="sideDrawer" class="drawer">
-    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #00aaff; padding-bottom:10px;">
-        <h3>Order Sync</h3>
-        <button onclick="toggleDrawer()" style="background:none; border:none; color:white; font-size:28px;">&times;</button>
-    </div>
-    <div id="drawerContent" style="margin-top:20px;"><p>No new updates.</p></div>
+    <div style="display:flex; justify-content:space-between;"><h3>Order Sync</h3><button onclick="toggleDrawer()" style="background:none; border:none; color:white; font-size:24px;">&times;</button></div>
+    <div id="drawerContent" style="margin-top:20px;"><p>Rider updates will appear here.</p></div>
 </div>
 
 <div class="app">
@@ -90,7 +64,7 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
     <div class="qty-row"><input type="number" id="qty" min="1" value="1"><select id="uom"><option value="pcs">pcs</option><option value="kg">kg</option><option value="ltr">ltr</option></select></div>
     <label>Source</label><input id="source">
     <button onclick="addOrder()">Add Order</button>
-    <button class="logout" onclick="logout()">Logout</button>
+    <button onclick="localStorage.clear(); window.location.replace('login.html');" style="background:#aa3333;">Logout</button>
   </div>
 
   <div class="main">
@@ -98,21 +72,18 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
       <div><h1>Borongan Delivery Hub 🚚</h1><p>Customer Dashboard</p></div>
       <div class="notif-btn" onclick="toggleDrawer()">🔔</div>
     </div>
-
     <table>
-      <thead><tr><th>Item</th><th class="col-qty">Qty</th><th class="col-uom">UoM</th><th>Source</th><th></th></tr></thead>
+      <thead><tr><th>Item</th><th style="width:10%; text-align:center;">Qty</th><th style="width:15%; text-align:center;">UoM</th><th>Source</th><th></th></tr></thead>
       <tbody id="orderTable"></tbody>
     </table>
-
     <div class="info-frame">
-      <div><strong>Customer:</strong> <span id="summaryCustName"></span></div>
+      <div><strong>Customer:</strong> <span id="summName"></span></div>
       <div><strong>Delivery Location:</strong> <span id="dispLoc" style="color:#00aaff; font-weight:bold;">NOT SET</span></div>
       <div><span class="cost-label">Location Cost:</span> ₱<span id="locCost">0</span></div>
       <div><span class="cost-label">Source Fees:</span> ₱<span id="srcCost">0</span></div>
       <div><span class="cost-label">Additional Cost:</span> ₱<span id="addCost">0</span></div>
       <div style="border-top:1px solid #444; padding-top:5px;"><strong>TOTAL:</strong> ₱<span id="totalCost">0</span></div>
     </div>
-
     <div class="action-buttons">
       <button onclick="openLocationModal()">Add Delivery Location</button>
       <button onclick="sendOrder()">Send to Rider</button>
@@ -121,33 +92,38 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
 </div>
 
 <script>
+// !!! PUT YOUR GOOGLE WEB APP URL HERE !!!
+const WEB_APP_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL"; 
+
 let orders = [];
 let fullData = { brgy: [], cities: [] };
 
-// AUTO-LOAD: Identity from localStorage + Locations from Google
 window.onload = function() {
+    // YOUR ORIGINAL IDENTITY LOGIC
     try {
         const customer = JSON.parse(localStorage.getItem('customer'));
         if (customer) {
             document.getElementById('custName').value = customer.name || '';
             document.getElementById('custEmail').value = customer.email || '';
             document.getElementById('custAddress').value = customer.address || '';
-            document.getElementById('summaryCustName').innerText = customer.name || '';
+            document.getElementById('summName').innerText = customer.name || '';
         }
-    } catch (e) { console.error("Identity load failed"); }
+    } catch (e) { console.error("Identity error"); }
 
-    if (typeof google !== 'undefined') {
-        google.script.run.withSuccessHandler(function(data) {
-            fullData = data;
-            const cityDropdown = document.getElementById("citySelect");
-            cityDropdown.innerHTML = '<option value="" disabled selected>Select City</option>';
-            data.cities.forEach(city => {
-                let opt = document.createElement("option");
-                opt.value = city; opt.innerText = city;
-                cityDropdown.appendChild(opt);
-            });
-        }).getBarangayData();
-    }
+    // THE FETCH FOR THE BRGY LIST (REPLACES GOOGLE.SCRIPT.RUN)
+    fetch(WEB_APP_URL + "?action=getBarangayData")
+    .then(res => res.json())
+    .then(data => {
+        fullData = data;
+        const citySelect = document.getElementById("citySelect");
+        citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
+        data.cities.forEach(c => {
+            let opt = document.createElement("option");
+            opt.value = c; opt.innerText = c;
+            citySelect.appendChild(opt);
+        });
+    })
+    .catch(err => console.error("Database connection failed:", err));
 };
 
 function openLocationModal() { document.getElementById("addressOverlay").style.display = "flex"; }
@@ -155,13 +131,13 @@ function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle
 
 function filterBarangays() {
     const selectedCity = document.getElementById("citySelect").value;
-    const brgyDropdown = document.getElementById("brgySelect");
-    brgyDropdown.innerHTML = ""; 
+    const brgySelect = document.getElementById("brgySelect");
+    brgySelect.innerHTML = "";
     const filtered = fullData.brgy.filter(b => b.city === selectedCity);
     filtered.forEach(b => {
         let opt = document.createElement("option");
         opt.value = b.name; opt.innerText = b.name;
-        brgyDropdown.appendChild(opt);
+        brgySelect.appendChild(opt);
     });
 }
 
@@ -169,15 +145,13 @@ function saveLocation() {
     const brgy = document.getElementById("brgySelect").value;
     const city = document.getElementById("citySelect").value;
     const brgyObj = fullData.brgy.find(b => b.name === brgy && b.city === city);
-    
-    // Updates ONLY the Delivery Display, not the Sidebar Home Address
     document.getElementById("dispLoc").innerText = brgy + ", " + city;
     document.getElementById("locCost").innerText = brgyObj ? brgyObj.cost : 0;
-    
     calculateFees();
     document.getElementById("addressOverlay").style.display = "none";
 }
 
+// YOUR ORIGINAL ORDER LOGIC
 function addOrder() {
     const itemIn = document.getElementById("item"), srcIn = document.getElementById("source");
     if(!itemIn.value || !srcIn.value) return;
@@ -190,10 +164,11 @@ function renderOrders() {
     const tbody = document.getElementById("orderTable");
     tbody.innerHTML = "";
     orders.forEach((o, i) => {
-        tbody.innerHTML += `<tr><td>${o.item}</td><td class="col-qty">${o.qty}</td><td class="col-uom">${o.uom}</td><td>${o.src}</td><td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td></tr>`;
+        tbody.innerHTML += `<tr><td>${o.item}</td><td style="text-align:center;">${o.qty}</td><td style="text-align:center;">${o.uom}</td><td>${o.src}</td><td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td></tr>`;
     });
 }
 
+// YOUR NEW 50 PESO SOURCE FEE LOGIC
 function calculateFees() {
     const uniqueSources = [...new Set(orders.map(o => o.src))].length;
     const srcTotal = uniqueSources * 50;
@@ -203,8 +178,7 @@ function calculateFees() {
 }
 
 function removeOrder(i) { orders.splice(i, 1); renderOrders(); calculateFees(); }
-function logout() { localStorage.clear(); window.location.replace("login.html"); }
-function sendOrder() { alert("Sending Order..."); }
+function sendOrder() { alert("Order sent!"); }
 </script>
 </body>
 </html>
