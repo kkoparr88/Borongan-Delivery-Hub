@@ -36,7 +36,7 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
 .drawer.active { right: 0; }
 .notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; position: relative; }
 
-/* PLUGIN: LOCATION POPUP UI */
+/* LOCATION POPUP UI */
 #addressOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; justify-content: center; align-items: center; }
 .address-card { background: #0a1f2e; padding: 30px; border-radius: 20px; border: 2px solid #00aaff; width: 380px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
 .address-card h3 { color: #00aaff; margin-bottom: 20px; }
@@ -98,7 +98,7 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
 
   <div class="main">
     <div class="hero">
-      <div><h1>Borongan Hub 🚚</h1><p>Welcome back, <span id="welcomeName"></span></p></div>
+      <div><h1>Borongan Hub 🚚</h1><p>Welcome, <span id="welcomeName"></span></p></div>
       <div class="notif-btn" onclick="toggleDrawer()">🔔</div>
     </div>
 
@@ -123,14 +123,29 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
 </div>
 
 <script>
-// !!! UPDATE THIS URL !!!
+// !!! UPDATE THIS URL FROM GOOGLE DEPLOYMENT !!!
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzZnqsTWrEPbOv2hyX9xn_Va0AdOU0ojuO6-4otqmD6CmKTJshQ4V4W90CzNHk5KM39/exec"; 
 
 let orders = [];
 let fullData = { brgy: [], cities: [] };
 
+// 1. HANDLER DEFINED AT TOP SO IT'S READY
+function setupLocations(response) {
+    console.log("Response from Google:", response);
+    if (response.success) {
+        fullData = response;
+        const citySelect = document.getElementById("citySelect");
+        citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
+        response.cities.forEach(c => {
+            let opt = document.createElement("option"); opt.value = c; opt.innerText = c;
+            citySelect.appendChild(opt);
+        });
+        console.log("Dropdown Ready.");
+    }
+}
+
+// 2. PAGE INITIALIZATION
 window.onload = function() {
-    // 1. IDENTITY PERSISTENCE
     const customer = JSON.parse(localStorage.getItem('customer'));
     if (customer) {
         document.getElementById('custName').value = customer.name;
@@ -140,25 +155,13 @@ window.onload = function() {
         document.getElementById('welcomeName').innerText = customer.name;
     }
 
-    // 2. TRIGGER MASTER SCRIPT (JSONP Injection)
+    // TRIGGER THE INJECTION (Like your login script)
     const script = document.createElement('script');
     script.src = `${WEB_APP_URL}?action=getBarangayData&callback=setupLocations`;
     document.body.appendChild(script);
 };
 
-// 3. HANDLER FOR LOCATION DATA
-function setupLocations(response) {
-    if (response.success) {
-        fullData = response;
-        const citySelect = document.getElementById("citySelect");
-        citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
-        response.cities.forEach(c => {
-            let opt = document.createElement("option"); opt.value = c; opt.innerText = c;
-            citySelect.appendChild(opt);
-        });
-    }
-}
-
+// 3. PRESERVED ORIGINAL LOGIC
 function handleUomChange() {
     const uom = document.getElementById("uom").value;
     document.getElementById("uomOther").style.display = (uom === "others") ? "block" : "none";
@@ -195,7 +198,7 @@ function addOrder() {
 }
 
 function renderOrders() {
-    const tbody = document.querySelector("table tbody");
+    const tbody = document.getElementById("orderTable");
     tbody.innerHTML = "";
     orders.forEach((o, i) => {
         tbody.innerHTML += `<tr><td>${o.item}</td><td>${o.qty}</td><td>${o.uom}</td><td>${o.src}</td><td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td></tr>`;
@@ -213,7 +216,7 @@ function calculateFees() {
 function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
 function openLocationModal() { document.getElementById("addressOverlay").style.display = "flex"; }
 function removeOrder(i) { orders.splice(i, 1); renderOrders(); calculateFees(); }
-function sendOrder() { alert("Connecting to Rider..."); }
+function sendOrder() { alert("Connecting to Rider Database..."); }
 </script>
 </body>
 </html>
