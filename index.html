@@ -8,12 +8,13 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
-/* --- ORIGINAL CSS PRESERVED --- */
+/* --- MAIN THEME --- */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-height: 100vh; overflow-x: hidden; }
 
 .app { display: flex; min-height: 100vh; }
 
+/* --- SIDEBAR --- */
 .sidebar { 
   background-color: #0a1f2e; 
   width: 320px; 
@@ -44,6 +45,9 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-h
   outline: none; 
 }
 
+/* FIX: Ensure the Item Textarea is adjustable/resizable */
+#item { resize: vertical; min-height: 80px; }
+
 .qty-row { display: flex; gap: 10px; }
 .qty-row input { width: 80px; text-align: center; }
 
@@ -62,6 +66,7 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-h
 
 .sidebar button:hover { opacity: 0.9; transform: translateY(-2px); }
 
+/* --- MAIN CONTENT & TABLE --- */
 .main { flex: 1; padding: 40px; }
 
 .hero { 
@@ -75,13 +80,12 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-h
   margin-bottom: 30px; 
 }
 
-/* --- TABLE STYLING --- */
 table { width: 100%; border-collapse: collapse; background: #0a1f2e; border-radius: 10px; overflow: hidden; margin-bottom: 30px; }
 th { background: #163545; padding: 15px; color: #00aaff; text-align: left; }
 td { padding: 15px; border-bottom: 1px solid #1b4f72; }
 .del-btn { color: #ff4d4d; background: none; border: none; cursor: pointer; font-size: 18px; }
 
-/* --- SUMMARY BOX --- */
+/* --- SUMMARY & DRAWER --- */
 .info-frame { 
   background: rgba(0, 170, 255, 0.05); 
   padding: 25px; 
@@ -94,12 +98,11 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
 }
 .total-row { grid-column: span 2; border-top: 1px solid #00aaff; padding-top: 10px; font-size: 20px; font-weight: bold; color: #00aaff; }
 
-/* --- DRAWER --- */
 .drawer { position: fixed; right: -450px; top: 0; width: 400px; height: 100%; background: #0a1f2e; transition: 0.5s; z-index: 3000; padding: 30px; border-left: 3px solid #00aaff; }
 .drawer.active { right: 0; }
 .notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; color: #00aaff; }
 
-/* --- POPUP (LOCATION PLUGIN) --- */
+/* --- POPUP --- */
 #addressOverlay { 
   display: none; 
   position: fixed; 
@@ -119,7 +122,6 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
   width: 400px; 
   box-shadow: 0 0 30px rgba(0,170,255,0.3); 
 }
-
 .action-buttons { display: flex; gap: 20px; }
 </style>
 </head>
@@ -149,10 +151,11 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
         <h2>Customer</h2>
         <label>Full Name</label><input id="custName" disabled>
         <label>Email</label><input id="custEmail" disabled>
-        <label>Home Address</label><textarea id="custAddress" disabled rows="3"></textarea>
+        <label>Home Address</label><textarea id="custAddress" disabled rows="3" style="resize:none;"></textarea>
         
         <h2 style="margin-top:30px;">New Order</h2>
-        <label>Item Name</label><input id="item" placeholder="Item name...">
+        <label>Item Name (Adjustable)</label>
+        <textarea id="item" placeholder="Type items here... (drag corner to resize)"></textarea>
         
         <label>Quantity & Unit</label>
         <div class="qty-row">
@@ -196,10 +199,9 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
         </div>
     </div>
 </div>
-
 <script>
 // !!! MASTER SCRIPT URL !!!
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxUnI4GZ3V3PQKNS27r8H-CJtdg_9f6DAd5JKqZ4rUj5hzHOEk2B4cgfxzEUbmHZTAv9A/exec"; 
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyru01ycKnnMpS41lmrvz6v-s_VgJo6MxM93BznvlwqKCDFaVopyzPIp0ysNbzLprOe/exec"; 
 
 let orders = [], fullData = { brgy: [], cities: [] };
 
@@ -218,6 +220,7 @@ function setupLocations(res) {
 }
 
 window.onload = function() {
+    // Identity Load
     const customer = JSON.parse(localStorage.getItem('customer'));
     if (customer) {
         document.getElementById('custName').value = customer.name;
@@ -226,7 +229,7 @@ window.onload = function() {
         document.getElementById('summName').innerText = customer.name;
         document.getElementById('welcomeName').innerText = customer.name;
     }
-    // Inject Script for JSONP (Exact match to your Login style)
+    // Inject Script for JSONP (Matches your working Login style)
     const script = document.createElement('script');
     script.src = `${WEB_APP_URL}?action=getBarangayData&callback=setupLocations`;
     document.body.appendChild(script);
@@ -260,11 +263,11 @@ function saveLocation() {
 }
 
 function addOrder() {
-    const item = document.getElementById("item").value, src = document.getElementById("source").value;
-    if(!item || !src) return;
+    const itemValue = document.getElementById("item").value, src = document.getElementById("source").value;
+    if(!itemValue || !src) return;
     let uom = document.getElementById("uom").value;
     if(uom === "others") uom = document.getElementById("uomOther").value;
-    orders.push({ item, qty: document.getElementById("qty").value, uom, src: src.toUpperCase() });
+    orders.push({ item: itemValue, qty: document.getElementById("qty").value, uom, src: src.toUpperCase() });
     renderOrders(); calculateFees();
     document.getElementById("item").value = ""; document.getElementById("source").value = "";
 }
