@@ -9,9 +9,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; overflow-y: auto; }
+
+/* MAIN LAYOUT */
 .app { display: flex; min-height: 100vh; }
 
-/* RESTORED SIDEBAR STYLING */
+/* SIDEBAR STYLING - PRESERVED */
 .sidebar { background-color: #0a1f2e; width: 320px; min-width: 320px; padding: 20px 25px; border-right: 2px solid #00aaff; }
 .sidebar h2 { font-size: 20px; margin-bottom: 12px; border-bottom: 2px solid #00aaff; padding-bottom: 5px; }
 .sidebar label { font-size: 14px; margin-top: 10px; display: block; }
@@ -19,9 +21,8 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; overf
 .qty-row { display: flex; gap: 8px; }
 .qty-row input { width: 70px; text-align: center; }
 .sidebar button { margin-top: 15px; background: linear-gradient(90deg, #00aaff, #0077cc); border: none; color: white; font-size: 15px; font-weight: 600; padding: 12px 0; width: 100%; border-radius: 8px; cursor: pointer; }
-.logout { background: #aa3333; }
 
-/* RESTORED MAIN & HERO */
+/* MAIN SECTION */
 .main { flex: 1; padding: 30px; }
 .hero { background: linear-gradient(90deg, #0f354f, #16629d); padding: 30px; border-radius: 12px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
 
@@ -30,21 +31,20 @@ table { width: 100%; border-collapse: collapse; background-color: #0a1f2e; borde
 th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle; text-align: left; }
 .del-btn { background: none; border: none; color: #ff4d4d; font-size: 20px; cursor: pointer; }
 
-/* RESTORED SLIDING DRAWER & NOTIF */
+/* SLIDING DRAWER & NOTIF - PRESERVED */
 .drawer { position: fixed; right: -450px; top: 0; width: 400px; height: 100%; background: #0a1f2e; transition: 0.5s; z-index: 3000; padding: 25px; border-left: 3px solid #00aaff; }
 .drawer.active { right: 0; }
 .notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; position: relative; }
-.badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 12px; padding: 2px 6px; border-radius: 50%; display: none; }
 
-/* NEW POPUP DESIGN (FIXED UI) */
+/* PLUGIN: LOCATION POPUP UI */
 #addressOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; justify-content: center; align-items: center; }
 .address-card { background: #0a1f2e; padding: 30px; border-radius: 20px; border: 2px solid #00aaff; width: 380px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-.address-card h3 { margin-bottom: 20px; color: #00aaff; }
-.address-card select { width: 100%; padding: 12px; margin: 10px 0; background: #163545; border: 1px solid #00aaff; color: white; border-radius: 8px; }
+.address-card h3 { color: #00aaff; margin-bottom: 20px; }
 
-/* INFO FRAME */
+/* SUMMARY BOX */
 .info-frame { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; padding: 20px; background-color: #0a1f2e; border-radius: 8px; border-left: 4px solid #00aaff; }
 .cost-label { color: #00aaff; font-weight: bold; }
+
 .action-buttons { display: flex; gap: 15px; }
 .action-buttons button { flex: 1; padding: 14px; border: none; border-radius: 8px; background: linear-gradient(90deg, #00aaff, #0077cc); color: white; font-weight: bold; cursor: pointer; }
 </style>
@@ -93,13 +93,13 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
     
     <label>Source</label><input id="source">
     <button onclick="addOrder()">Add Order</button>
-    <button onclick="localStorage.clear(); window.location.replace('login.html');" class="logout">Logout</button>
+    <button onclick="localStorage.clear(); window.location.replace('login.html');" style="background:#aa3333;">Logout</button>
   </div>
 
   <div class="main">
     <div class="hero">
-      <div><h1>Borongan Delivery Hub 🚚</h1><p>Welcome back, <span id="summName"></span></p></div>
-      <div class="notif-btn" onclick="toggleDrawer()">🔔<span class="badge" id="notifBadge">0</span></div>
+      <div><h1>Borongan Hub 🚚</h1><p>Welcome back, <span id="welcomeName"></span></p></div>
+      <div class="notif-btn" onclick="toggleDrawer()">🔔</div>
     </div>
 
     <table>
@@ -108,7 +108,7 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
     </table>
 
     <div class="info-frame">
-      <div><strong>Customer:</strong> <span id="summName2"></span></div>
+      <div><strong>Customer:</strong> <span id="summName"></span></div>
       <div><strong>Delivery To:</strong> <span id="dispLoc" style="color:#00aaff; font-weight:bold;">NOT SET</span></div>
       <div><span class="cost-label">Location Cost:</span> ₱<span id="locCost">0</span></div>
       <div><span class="cost-label">Source Fees:</span> ₱<span id="srcCost">0</span></div>
@@ -123,41 +123,41 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
 </div>
 
 <script>
-// !!! MANDATORY: UPDATE THIS URL !!!
+// !!! UPDATE THIS URL !!!
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzZnqsTWrEPbOv2hyX9xn_Va0AdOU0ojuO6-4otqmD6CmKTJshQ4V4W90CzNHk5KM39/exec"; 
 
 let orders = [];
 let fullData = { brgy: [], cities: [] };
 
 window.onload = function() {
-    // Identity Persistence (Kiko's Logic)
-    try {
-        const customer = JSON.parse(localStorage.getItem('customer'));
-        if (customer) {
-            document.getElementById('custName').value = customer.name;
-            document.getElementById('custEmail').value = customer.email;
-            document.getElementById('custAddress').value = customer.address;
-            document.getElementById('summName').innerText = customer.name;
-            document.getElementById('summName2').innerText = customer.name;
-        }
-    } catch (e) {}
+    // 1. IDENTITY PERSISTENCE
+    const customer = JSON.parse(localStorage.getItem('customer'));
+    if (customer) {
+        document.getElementById('custName').value = customer.name;
+        document.getElementById('custEmail').value = customer.email;
+        document.getElementById('custAddress').value = customer.address;
+        document.getElementById('summName').innerText = customer.name;
+        document.getElementById('welcomeName').innerText = customer.name;
+    }
 
-    // GITHUB FETCH LOGIC
-    fetch(`${WEB_APP_URL}?action=getBarangayData`)
-    .then(res => res.json())
-    .then(data => {
-        fullData = data;
+    // 2. TRIGGER MASTER SCRIPT (JSONP Injection)
+    const script = document.createElement('script');
+    script.src = `${WEB_APP_URL}?action=getBarangayData&callback=setupLocations`;
+    document.body.appendChild(script);
+};
+
+// 3. HANDLER FOR LOCATION DATA
+function setupLocations(response) {
+    if (response.success) {
+        fullData = response;
         const citySelect = document.getElementById("citySelect");
         citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
-        data.cities.forEach(c => {
+        response.cities.forEach(c => {
             let opt = document.createElement("option"); opt.value = c; opt.innerText = c;
             citySelect.appendChild(opt);
         });
-    }).catch(err => console.error("Connection Failed"));
-};
-
-function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
-function openLocationModal() { document.getElementById("addressOverlay").style.display = "flex"; }
+    }
+}
 
 function handleUomChange() {
     const uom = document.getElementById("uom").value;
@@ -195,7 +195,7 @@ function addOrder() {
 }
 
 function renderOrders() {
-    const tbody = document.getElementById("orderTable");
+    const tbody = document.querySelector("table tbody");
     tbody.innerHTML = "";
     orders.forEach((o, i) => {
         tbody.innerHTML += `<tr><td>${o.item}</td><td>${o.qty}</td><td>${o.uom}</td><td>${o.src}</td><td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td></tr>`;
@@ -210,9 +210,10 @@ function calculateFees() {
     document.getElementById("totalCost").innerText = srcFee + locFee;
 }
 
+function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
+function openLocationModal() { document.getElementById("addressOverlay").style.display = "flex"; }
 function removeOrder(i) { orders.splice(i, 1); renderOrders(); calculateFees(); }
-function sendOrder() { alert("Sending Order..."); }
+function sendOrder() { alert("Connecting to Rider..."); }
 </script>
 </body>
 </html>
-
