@@ -100,7 +100,7 @@
 
 <script>
 /**
- * 🛠️ SCRIPT URL - UPDATED VERSION
+ * 🛠️ SCRIPT URL - UPDATED TO MATCH YOUR MASTER SCRIPT
  */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyru01ycKnnMpS41lmrvz6v-s_VgJo6MxM93BznvlwqKCDFaVopyzPIp0ysNbzLprOe/exec";
 
@@ -121,21 +121,12 @@ function login() {
   errorBox.style.color = "#aad4ff";
   errorBox.textContent = "Connecting to Borongan Hub...";
 
-  // JSONP Callback logic
+  // JSONP Callback logic (Preserved and Synced)
   const callbackName = 'googleDocCallback';
   
-  // Timeout protection
-  const timeoutId = setTimeout(() => {
-    if (loginBtn.disabled) {
-      loginBtn.disabled = false;
-      loginBtn.innerText = "Login";
-      errorBox.style.color = "#ff8080";
-      errorBox.textContent = "Server is not responding. Please check your script deployment.";
-    }
-  }, 15000);
-
+  // Define the receiver function on the global window object
   window[callbackName] = function(data) {
-    clearTimeout(timeoutId);
+    // Clean up
     delete window[callbackName];
     const scriptTag = document.getElementById('jsonp-script');
     if (scriptTag) scriptTag.remove();
@@ -144,11 +135,10 @@ function login() {
       errorBox.style.color = "#80ff80";
       errorBox.textContent = "Success! Redirecting...";
       
-      // Store user data
+      // Store user data in localStorage for index.html to use
       localStorage.setItem("customer", JSON.stringify(data.customer));
       
       setTimeout(() => {
-        // Relative path to avoid 404 on GitHub Pages
         window.location.href = "./index.html"; 
       }, 1000);
     } else {
@@ -159,27 +149,25 @@ function login() {
     }
   };
 
-  // Inject Script
+  // Inject Script for JSONP
   const script = document.createElement('script');
   script.id = 'jsonp-script';
+  // Note: Added action=login to ensure the Master Script knows which department to open
   script.src = `${SCRIPT_URL}?callback=${callbackName}&action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
   
   script.onerror = function() {
-    clearTimeout(timeoutId);
     loginBtn.disabled = false;
     loginBtn.innerText = "Login";
     errorBox.style.color = "#ff8080";
-    errorBox.textContent = "Network error. Make sure the script is deployed as 'Anyone'.";
+    errorBox.textContent = "Network error. Make sure script is deployed as 'Anyone'.";
   };
 
   document.body.appendChild(script);
 }
 
-// Enter Key Handler
+// Support for Enter Key
 document.addEventListener('keypress', (e) => { if (e.key === 'Enter') login(); });
 </script>
 
 </body>
 </html>
-
-
