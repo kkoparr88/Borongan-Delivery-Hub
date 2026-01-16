@@ -3,148 +3,220 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Borongan Delivery Hub</title>
+<title>Borongan Delivery Hub | Dashboard</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; overflow-y: auto; }
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
-/* MAIN LAYOUT */
+/* --- ORIGINAL CSS PRESERVED --- */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-height: 100vh; overflow-x: hidden; }
+
 .app { display: flex; min-height: 100vh; }
 
-/* SIDEBAR STYLING - PRESERVED */
-.sidebar { background-color: #0a1f2e; width: 320px; min-width: 320px; padding: 20px 25px; border-right: 2px solid #00aaff; }
-.sidebar h2 { font-size: 20px; margin-bottom: 12px; border-bottom: 2px solid #00aaff; padding-bottom: 5px; }
-.sidebar label { font-size: 14px; margin-top: 10px; display: block; }
-.sidebar input, .sidebar textarea, .sidebar select { width: 100%; padding: 8px 10px; margin-top: 5px; border-radius: 6px; border: none; background-color: #163545; color: #ddd; }
-.qty-row { display: flex; gap: 8px; }
-.qty-row input { width: 70px; text-align: center; }
-.sidebar button { margin-top: 15px; background: linear-gradient(90deg, #00aaff, #0077cc); border: none; color: white; font-size: 15px; font-weight: 600; padding: 12px 0; width: 100%; border-radius: 8px; cursor: pointer; }
+.sidebar { 
+  background-color: #0a1f2e; 
+  width: 320px; 
+  min-width: 320px; 
+  padding: 25px; 
+  border-right: 2px solid #00aaff; 
+  box-shadow: 5px 0 15px rgba(0,0,0,0.3); 
+}
 
-/* MAIN SECTION */
-.main { flex: 1; padding: 30px; }
-.hero { background: linear-gradient(90deg, #0f354f, #16629d); padding: 30px; border-radius: 12px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+.sidebar h2 { 
+  font-size: 20px; 
+  margin-bottom: 15px; 
+  color: #00aaff; 
+  border-bottom: 2px solid #00aaff; 
+  padding-bottom: 5px; 
+}
 
-/* TABLE */
-table { width: 100%; border-collapse: collapse; background-color: #0a1f2e; border-radius: 8px; table-layout: fixed; }
-th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle; text-align: left; }
-.del-btn { background: none; border: none; color: #ff4d4d; font-size: 20px; cursor: pointer; }
+.sidebar label { font-size: 13px; margin-top: 12px; display: block; color: #88ccee; }
 
-/* SLIDING DRAWER & NOTIF - PRESERVED */
-.drawer { position: fixed; right: -450px; top: 0; width: 400px; height: 100%; background: #0a1f2e; transition: 0.5s; z-index: 3000; padding: 25px; border-left: 3px solid #00aaff; }
+.sidebar input, .sidebar textarea, .sidebar select { 
+  width: 100%; 
+  padding: 10px; 
+  margin-top: 5px; 
+  border-radius: 8px; 
+  border: 1px solid #1b4f72; 
+  background: #163545; 
+  color: #fff; 
+  outline: none; 
+}
+
+.qty-row { display: flex; gap: 10px; }
+.qty-row input { width: 80px; text-align: center; }
+
+.sidebar button { 
+  margin-top: 20px; 
+  background: linear-gradient(90deg, #00aaff, #0077cc); 
+  border: none; 
+  color: white; 
+  padding: 12px; 
+  width: 100%; 
+  border-radius: 8px; 
+  font-weight: 600; 
+  cursor: pointer; 
+  transition: 0.3s; 
+}
+
+.sidebar button:hover { opacity: 0.9; transform: translateY(-2px); }
+
+.main { flex: 1; padding: 40px; }
+
+.hero { 
+  background: rgba(255,255,255,0.05); 
+  padding: 30px; 
+  border-radius: 15px; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  border-left: 5px solid #00aaff; 
+  margin-bottom: 30px; 
+}
+
+/* --- TABLE STYLING --- */
+table { width: 100%; border-collapse: collapse; background: #0a1f2e; border-radius: 10px; overflow: hidden; margin-bottom: 30px; }
+th { background: #163545; padding: 15px; color: #00aaff; text-align: left; }
+td { padding: 15px; border-bottom: 1px solid #1b4f72; }
+.del-btn { color: #ff4d4d; background: none; border: none; cursor: pointer; font-size: 18px; }
+
+/* --- SUMMARY BOX --- */
+.info-frame { 
+  background: rgba(0, 170, 255, 0.05); 
+  padding: 25px; 
+  border-radius: 12px; 
+  border: 1px solid #00aaff; 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 15px; 
+  margin-bottom: 20px; 
+}
+.total-row { grid-column: span 2; border-top: 1px solid #00aaff; padding-top: 10px; font-size: 20px; font-weight: bold; color: #00aaff; }
+
+/* --- DRAWER --- */
+.drawer { position: fixed; right: -450px; top: 0; width: 400px; height: 100%; background: #0a1f2e; transition: 0.5s; z-index: 3000; padding: 30px; border-left: 3px solid #00aaff; }
 .drawer.active { right: 0; }
-.notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; position: relative; }
+.notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; color: #00aaff; }
 
-/* LOCATION POPUP UI */
-#addressOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; justify-content: center; align-items: center; }
-.address-card { background: #0a1f2e; padding: 30px; border-radius: 20px; border: 2px solid #00aaff; width: 380px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-.address-card h3 { color: #00aaff; margin-bottom: 20px; }
+/* --- POPUP (LOCATION PLUGIN) --- */
+#addressOverlay { 
+  display: none; 
+  position: fixed; 
+  top: 0; left: 0; 
+  width: 100%; height: 100%; 
+  background: rgba(0,0,0,0.8); 
+  z-index: 9999; 
+  justify-content: center; 
+  align-items: center; 
+  backdrop-filter: blur(5px); 
+}
+.address-card { 
+  background: #0d2a3a; 
+  padding: 35px; 
+  border-radius: 20px; 
+  border: 2px solid #00aaff; 
+  width: 400px; 
+  box-shadow: 0 0 30px rgba(0,170,255,0.3); 
+}
 
-/* SUMMARY BOX */
-.info-frame { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; padding: 20px; background-color: #0a1f2e; border-radius: 8px; border-left: 4px solid #00aaff; }
-.cost-label { color: #00aaff; font-weight: bold; }
-
-.action-buttons { display: flex; gap: 15px; }
-.action-buttons button { flex: 1; padding: 14px; border: none; border-radius: 8px; background: linear-gradient(90deg, #00aaff, #0077cc); color: white; font-weight: bold; cursor: pointer; }
+.action-buttons { display: flex; gap: 20px; }
 </style>
 </head>
 <body>
 
 <div id="addressOverlay">
-    <div class="address-card animate__animated animate__zoomIn">
-        <h3>📍 Select Destination</h3>
-        <label style="display:block; text-align:left; font-size:12px; color:#00aaff;">City/Municipality</label>
-        <select id="citySelect" onchange="filterBarangays()"><option>Connecting...</option></select>
-        <label style="display:block; text-align:left; font-size:12px; color:#00aaff;">Barangay</label>
-        <select id="brgySelect"><option>Select City First...</option></select>
-        <button onclick="saveLocation()" style="width:100%; padding:14px; background:#00aaff; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:15px;">Confirm Location</button>
+    <div class="address-card animate__animated animate__fadeInDown">
+        <h3 style="text-align:center; color:#fff; margin-bottom:20px;">🚚 Delivery Destination</h3>
+        <label style="color:#00aaff; font-size:12px;">City / Municipality</label>
+        <select id="citySelect" onchange="filterBarangays()"><option>Loading Data...</option></select>
+        <label style="color:#00aaff; font-size:12px;">Select Barangay</label>
+        <select id="brgySelect"><option>Select City First</option></select>
+        <button onclick="saveLocation()" style="width:100%; padding:15px; background:#00aaff; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; margin-top:10px;">Confirm Location</button>
     </div>
 </div>
 
 <div id="sideDrawer" class="drawer">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3>Order Sync</h3>
-        <button onclick="toggleDrawer()" style="background:none; border:none; color:white; font-size:28px;">&times;</button>
+        <h3 style="color:#00aaff;">Notifications</h3>
+        <button onclick="toggleDrawer()" style="background:none; border:none; color:white; font-size:30px; cursor:pointer;">&times;</button>
     </div>
-    <div id="drawerContent" style="margin-top:20px;"><p>No new updates.</p></div>
+    <div id="drawerContent" style="margin-top:20px; color:#ccc;">No new messages.</div>
 </div>
 
 <div class="app">
-  <div class="sidebar">
-    <h2>Customer Details</h2>
-    <label>Name</label><input id="custName" disabled>
-    <label>Email</label><input id="custEmail" disabled>
-    <label>Home Address</label><textarea id="custAddress" disabled></textarea>
-    
-    <h2 style="margin-top:25px;">Order Details</h2>
-    <label>Item</label><textarea id="item"></textarea>
-    <label>Quantity</label>
-    <div class="qty-row">
-      <input type="number" id="qty" min="1" value="1">
-      <select id="uom" onchange="handleUomChange()">
-        <option value="pcs">pcs</option>
-        <option value="kg">kg</option>
-        <option value="order">order</option>
-        <option value="others">others</option>
-      </select>
-    </div>
-    <input id="uomOther" type="text" placeholder="Specify unit" style="display:none; margin-top:5px;">
-    
-    <label>Source</label><input id="source">
-    <button onclick="addOrder()">Add Order</button>
-    <button onclick="localStorage.clear(); window.location.replace('login.html');" style="background:#aa3333;">Logout</button>
-  </div>
-
-  <div class="main">
-    <div class="hero">
-      <div><h1>Borongan Hub 🚚</h1><p>Welcome, <span id="welcomeName"></span></p></div>
-      <div class="notif-btn" onclick="toggleDrawer()">🔔</div>
+    <div class="sidebar">
+        <h2>Customer</h2>
+        <label>Full Name</label><input id="custName" disabled>
+        <label>Email</label><input id="custEmail" disabled>
+        <label>Home Address</label><textarea id="custAddress" disabled rows="3"></textarea>
+        
+        <h2 style="margin-top:30px;">New Order</h2>
+        <label>Item Name</label><input id="item" placeholder="Item name...">
+        
+        <label>Quantity & Unit</label>
+        <div class="qty-row">
+            <input type="number" id="qty" value="1">
+            <select id="uom" onchange="handleUomChange()">
+                <option value="pcs">pcs</option>
+                <option value="kg">kg</option>
+                <option value="order">order</option>
+                <option value="others">others</option>
+            </select>
+        </div>
+        <input id="uomOther" type="text" placeholder="Specify unit..." style="display:none; margin-top:8px;">
+        
+        <label>Source Store</label><input id="source" placeholder="Store name...">
+        <button onclick="addOrder()">Add to List</button>
+        <button onclick="logout()" style="background:#441111; margin-top:10px;">Logout</button>
     </div>
 
-    <table>
-      <thead><tr><th>Item</th><th style="width:10%;">Qty</th><th style="width:15%;">UoM</th><th>Source</th><th></th></tr></thead>
-      <tbody id="orderTable"></tbody>
-    </table>
+    <div class="main">
+        <div class="hero">
+            <div><h1>Borongan Hub 🚚</h1><p>Welcome, <span id="welcomeName" style="color:#00aaff;">Guest</span></p></div>
+            <div class="notif-btn" onclick="toggleDrawer()">🔔</div>
+        </div>
 
-    <div class="info-frame">
-      <div><strong>Customer:</strong> <span id="summName"></span></div>
-      <div><strong>Delivery To:</strong> <span id="dispLoc" style="color:#00aaff; font-weight:bold;">NOT SET</span></div>
-      <div><span class="cost-label">Location Cost:</span> ₱<span id="locCost">0</span></div>
-      <div><span class="cost-label">Source Fees:</span> ₱<span id="srcCost">0</span></div>
-      <div><strong>TOTAL:</strong> ₱<span id="totalCost">0</span></div>
-    </div>
+        <table>
+            <thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Source</th><th>Action</th></tr></thead>
+            <tbody id="orderTable"></tbody>
+        </table>
 
-    <div class="action-buttons">
-      <button onclick="openLocationModal()">Add Delivery Location</button>
-      <button onclick="sendOrder()">Send to Rider</button>
+        <div class="info-frame">
+            <div>Customer: <strong id="summName">--</strong></div>
+            <div>Deliver To: <strong id="dispLoc" style="color:#00aaff;">NOT SET</strong></div>
+            <div>Location Fee: ₱<span id="locCost">0</span></div>
+            <div>Handling Fee: ₱<span id="srcCost">0</span></div>
+            <div class="total-row">Estimated Total: ₱<span id="totalCost">0</span></div>
+        </div>
+
+        <div class="action-buttons">
+            <button onclick="openLocationModal()" style="background:#163545; color:white; padding:15px; border-radius:8px; flex:1; cursor:pointer; border: 1px solid #00aaff;">📍 Set Destination</button>
+            <button onclick="sendOrder()" style="background:#00aaff; color:white; padding:15px; border-radius:8px; flex:1; border:none; font-weight:bold; cursor:pointer;">🚀 Send to Rider</button>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
-// !!! UPDATE THIS URL FROM GOOGLE DEPLOYMENT !!!
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyru01ycKnnMpS41lmrvz6v-s_VgJo6MxM93BznvlwqKCDFaVopyzPIp0ysNbzLprOe/exec"; 
+// !!! MASTER SCRIPT URL !!!
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxUnI4GZ3V3PQKNS27r8H-CJtdg_9f6DAd5JKqZ4rUj5hzHOEk2B4cgfxzEUbmHZTAv9A/exec"; 
 
-let orders = [];
-let fullData = { brgy: [], cities: [] };
+let orders = [], fullData = { brgy: [], cities: [] };
 
-// 1. HANDLER DEFINED AT TOP SO IT'S READY
-function setupLocations(response) {
-    console.log("Response from Google:", response);
-    if (response.success) {
-        fullData = response;
+// --- CONNECTION BRIDGE ---
+function setupLocations(res) {
+    console.log("Bridge connected. Data received.");
+    if (res.success) {
+        fullData = res;
         const citySelect = document.getElementById("citySelect");
-        citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
-        response.cities.forEach(c => {
+        citySelect.innerHTML = '<option value="" disabled selected>Choose City</option>';
+        res.cities.forEach(c => {
             let opt = document.createElement("option"); opt.value = c; opt.innerText = c;
             citySelect.appendChild(opt);
         });
-        console.log("Dropdown Ready.");
     }
 }
 
-// 2. PAGE INITIALIZATION
 window.onload = function() {
     const customer = JSON.parse(localStorage.getItem('customer'));
     if (customer) {
@@ -154,14 +226,13 @@ window.onload = function() {
         document.getElementById('summName').innerText = customer.name;
         document.getElementById('welcomeName').innerText = customer.name;
     }
-
-    // TRIGGER THE INJECTION (Like your login script)
+    // Inject Script for JSONP (Exact match to your Login style)
     const script = document.createElement('script');
     script.src = `${WEB_APP_URL}?action=getBarangayData&callback=setupLocations`;
     document.body.appendChild(script);
 };
 
-// 3. PRESERVED ORIGINAL LOGIC
+// --- UI LOGIC ---
 function handleUomChange() {
     const uom = document.getElementById("uom").value;
     document.getElementById("uomOther").style.display = (uom === "others") ? "block" : "none";
@@ -170,7 +241,7 @@ function handleUomChange() {
 function filterBarangays() {
     const city = document.getElementById("citySelect").value;
     const brgySelect = document.getElementById("brgySelect");
-    brgySelect.innerHTML = "";
+    brgySelect.innerHTML = '<option value="" disabled selected>Choose Barangay</option>';
     fullData.brgy.filter(b => b.city === city).forEach(b => {
         let opt = document.createElement("option"); opt.value = b.name; opt.innerText = b.name;
         brgySelect.appendChild(opt);
@@ -180,6 +251,7 @@ function filterBarangays() {
 function saveLocation() {
     const brgy = document.getElementById("brgySelect").value;
     const city = document.getElementById("citySelect").value;
+    if(!brgy || !city) return;
     const brgyObj = fullData.brgy.find(b => b.name === brgy && b.city === city);
     document.getElementById("dispLoc").innerText = brgy + ", " + city;
     document.getElementById("locCost").innerText = brgyObj ? brgyObj.cost : 0;
@@ -189,9 +261,9 @@ function saveLocation() {
 
 function addOrder() {
     const item = document.getElementById("item").value, src = document.getElementById("source").value;
+    if(!item || !src) return;
     let uom = document.getElementById("uom").value;
     if(uom === "others") uom = document.getElementById("uomOther").value;
-    if(!item || !src) return;
     orders.push({ item, qty: document.getElementById("qty").value, uom, src: src.toUpperCase() });
     renderOrders(); calculateFees();
     document.getElementById("item").value = ""; document.getElementById("source").value = "";
@@ -213,11 +285,11 @@ function calculateFees() {
     document.getElementById("totalCost").innerText = srcFee + locFee;
 }
 
-function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
-function openLocationModal() { document.getElementById("addressOverlay").style.display = "flex"; }
 function removeOrder(i) { orders.splice(i, 1); renderOrders(); calculateFees(); }
-function sendOrder() { alert("Connecting to Rider Database..."); }
+function openLocationModal() { document.getElementById("addressOverlay").style.display = "flex"; }
+function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
+function logout() { localStorage.clear(); window.location.replace('login.html'); }
+function sendOrder() { alert("Sending to Rider Hub..."); }
 </script>
 </body>
 </html>
-
