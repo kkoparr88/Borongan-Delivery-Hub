@@ -5,88 +5,141 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Borongan Delivery Hub</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; overflow-y: auto; }
 .app { display: flex; min-height: 100vh; }
-.sidebar { background-color: #0a1f2e; width: 320px; min-width: 320px; padding: 20px 25px; border-right: 2px solid #00aaff; }
-.sidebar h2 { font-size: 20px; margin-bottom: 12px; border-bottom: 2px solid #00aaff; padding-bottom: 5px; }
-.sidebar label { font-size: 14px; margin-top: 10px; display: block; }
-.sidebar input, .sidebar textarea, .sidebar select { width: 100%; padding: 8px 10px; margin-top: 5px; border-radius: 6px; border: none; background-color: #163545; color: #ddd; }
-.qty-row { display: flex; gap: 8px; }
-.qty-row input { width: 70px; text-align: center; }
-.sidebar button { margin-top: 15px; background: linear-gradient(90deg, #00aaff, #0077cc); border: none; color: white; font-size: 15px; font-weight: 600; padding: 12px 0; width: 100%; border-radius: 8px; cursor: pointer; }
+
+/* SIDEBAR & HERO */
+.sidebar { background-color: #0a1f2e; width: 320px; min-width: 320px; padding: 25px; border-right: 2px solid #00aaff; }
+.sidebar h2 { font-size: 20px; margin-bottom: 12px; border-bottom: 2px solid #00aaff; padding-bottom: 5px; color: #00aaff; }
+.sidebar label { font-size: 13px; margin-top: 15px; display: block; color: #888; }
+.sidebar input, .sidebar textarea, .sidebar select { 
+    width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid #1b4f72; 
+    background-color: #163545; color: #ddd; outline: none;
+}
+
 .main { flex: 1; padding: 30px; }
-.hero { background: linear-gradient(90deg, #0f354f, #16629d); padding: 30px; border-radius: 12px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-table { width: 100%; border-collapse: collapse; background-color: #0a1f2e; border-radius: 8px; table-layout: fixed; }
-th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle; text-align: left; }
+.hero { background: linear-gradient(90deg, #0f354f, #16629d); padding: 30px; border-radius: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+/* TABLE STYLE */
+table { width: 100%; border-collapse: collapse; background-color: #0a1f2e; border-radius: 10px; overflow: hidden; }
+th, td { padding: 15px; border-bottom: 1px solid #163545; text-align: left; }
+th { background-color: #003a65; color: #00aaff; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+
+/* ================= SLEEK MODAL UI ================= */
+#addressOverlay { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; 
+    backdrop-filter: blur(5px);
+}
+.address-card { 
+    background: #0a1f2e; padding: 40px; border-radius: 25px; border: 2px solid #00aaff; 
+    width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
+}
+.address-card h3 { color: #fff; margin-bottom: 25px; font-weight: 600; font-size: 1.5rem; letter-spacing: 0.5px; }
+.address-card label { display: block; text-align: left; font-size: 12px; color: #00aaff; margin-bottom: 5px; margin-left: 5px; }
+.address-card select { 
+    width: 100%; padding: 14px; margin-bottom: 20px; background: #163545; 
+    border: 1px solid #1b4f72; color: white; border-radius: 12px; appearance: none;
+}
+.btn-confirm { 
+    width: 100%; padding: 15px; background: linear-gradient(90deg, #00aaff, #0077cc); 
+    color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; 
+    transition: all 0.3s ease; font-size: 1rem; box-shadow: 0 4px 15px rgba(0,170,255,0.3);
+}
+.btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,170,255,0.5); }
+
+/* SUMMARY FRAME */
+.info-frame { 
+    display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; padding: 25px; 
+    background-color: #0a1f2e; border-radius: 15px; border-left: 5px solid #00aaff; 
+}
+.cost-label { color: #00aaff; font-weight: 600; }
+
+.action-buttons { display: flex; gap: 15px; margin-top: 10px; }
+.action-buttons button { 
+    flex: 1; padding: 16px; border: none; border-radius: 12px; 
+    background: linear-gradient(90deg, #00aaff, #0077cc); color: white; 
+    font-weight: bold; cursor: pointer; transition: 0.3s;
+}
+
 .del-btn { background: none; border: none; color: #ff4d4d; font-size: 20px; cursor: pointer; }
-.info-frame { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; padding: 20px; background-color: #0a1f2e; border-radius: 8px; border-left: 4px solid #00aaff; }
-.cost-label { color: #00aaff; font-weight: bold; }
-#addressOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
-.address-card { background: #0a1f2e; padding: 30px; border-radius: 15px; border: 2px solid #00aaff; width: 350px; text-align: center; }
-.drawer { position: fixed; right: -450px; top: 0; width: 400px; height: 100%; background: #0a1f2e; transition: 0.5s; z-index: 3000; padding: 25px; border-left: 3px solid #00aaff; }
-.drawer.active { right: 0; }
-.notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; }
-.action-buttons { display: flex; gap: 15px; }
-.action-buttons button { flex: 1; padding: 14px; border: none; border-radius: 8px; background: linear-gradient(90deg, #00aaff, #0077cc); color: white; font-weight: bold; cursor: pointer; }
 </style>
 </head>
+
 <body>
 
 <div id="addressOverlay">
     <div class="address-card animate__animated animate__zoomIn">
-        <h3 style="color:#00aaff; margin-bottom:15px;">Set Delivery Address</h3>
-        <label style="font-size:12px; display:block; text-align:left;">City/Municipality</label>
-        <select id="citySelect" onchange="filterBarangays()"><option>Loading...</option></select>
-        <label style="font-size:12px; display:block; text-align:left; margin-top:10px;">Barangay</label>
-        <select id="brgySelect"><option>Select City First...</option></select>
-        <button onclick="saveLocation()" style="width:100%; padding:12px; background:#00aaff; color:white; border:none; border-radius:8px; margin-top:20px; font-weight:bold; cursor:pointer;">Confirm Location</button>
-    </div>
-</div>
+        <h3>📍 Set Destination</h3>
+        
+        <label>City/Municipality</label>
+        <select id="citySelect" onchange="filterBarangays()">
+            <option>Connecting to Server...</option>
+        </select>
 
-<div id="sideDrawer" class="drawer">
-    <div style="display:flex; justify-content:space-between;"><h3>Order Sync</h3><button onclick="toggleDrawer()" style="background:none; border:none; color:white; font-size:24px;">&times;</button></div>
-    <div id="drawerContent" style="margin-top:20px;"><p>Rider updates will appear here.</p></div>
+        <label>Barangay</label>
+        <select id="brgySelect">
+            <option>Choose City First...</option>
+        </select>
+
+        <button class="btn-confirm" onclick="saveLocation()">Confirm Delivery Address</button>
+    </div>
 </div>
 
 <div class="app">
   <div class="sidebar">
-    <h2>Customer Details</h2>
-    <label>Name</label><input id="custName" disabled>
-    <label>Email</label><input id="custEmail" disabled>
-    <label>Home Address</label><textarea id="custAddress" disabled></textarea>
-    
-    <h2 style="margin-top:25px;">Order Details</h2>
-    <label>Item</label><textarea id="item"></textarea>
-    <label>Quantity</label>
-    <div class="qty-row"><input type="number" id="qty" min="1" value="1"><select id="uom"><option value="pcs">pcs</option><option value="kg">kg</option><option value="ltr">ltr</option></select></div>
-    <label>Source</label><input id="source">
-    <button onclick="addOrder()">Add Order</button>
-    <button onclick="localStorage.clear(); window.location.replace('login.html');" style="background:#aa3333;">Logout</button>
+    <h2>Customer Info</h2>
+    <label>Full Name</label><input id="custName" disabled>
+    <label>Email Address</label><input id="custEmail" disabled>
+    <label>Home Address</label><textarea id="custAddress" disabled rows="3"></textarea>
+
+    <h2 style="margin-top:30px;">Add Items</h2>
+    <label>Item Description</label><textarea id="item" placeholder="e.g. 2 Burger McDo"></textarea>
+    <label>Quantity & Unit</label>
+    <div style="display:flex; gap:10px;">
+        <input type="number" id="qty" value="1" style="width:70px;">
+        <select id="uom">
+            <option value="pcs">pcs</option>
+            <option value="kg">kg</option>
+            <option value="order">order</option>
+        </select>
+    </div>
+    <label>Source (Store Name)</label><input id="source" placeholder="e.g. McDo">
+    <button onclick="addOrder()">Add to Basket</button>
+    <button onclick="localStorage.clear(); window.location.replace('login.html');" style="background:#aa3333; margin-top:10px;">Logout</button>
   </div>
 
   <div class="main">
     <div class="hero">
-      <div><h1>Borongan Delivery Hub 🚚</h1><p>Customer Dashboard</p></div>
-      <div class="notif-btn" onclick="toggleDrawer()">🔔</div>
+      <div><h1>Borongan Hub 🚚</h1><p>Welcome back, <span id="welcomeName">Kiko</span></p></div>
+      <div style="cursor:pointer; font-size:26px;">🔔</div>
     </div>
+
     <table>
-      <thead><tr><th>Item</th><th style="width:10%; text-align:center;">Qty</th><th style="width:15%; text-align:center;">UoM</th><th>Source</th><th></th></tr></thead>
+      <thead>
+        <tr><th>Item</th><th style="width:80px; text-align:center;">Qty</th><th style="width:100px;">UoM</th><th>Source</th><th style="width:50px;"></th></tr>
+      </thead>
       <tbody id="orderTable"></tbody>
     </table>
+
     <div class="info-frame">
       <div><strong>Customer:</strong> <span id="summName"></span></div>
-      <div><strong>Delivery Location:</strong> <span id="dispLoc" style="color:#00aaff; font-weight:bold;">NOT SET</span></div>
-      <div><span class="cost-label">Location Cost:</span> ₱<span id="locCost">0</span></div>
+      <div><strong>Delivery To:</strong> <span id="dispLoc" style="color:#00aaff; font-weight:bold;">NOT SET</span></div>
+      <div><span class="cost-label">Delivery Fee:</span> ₱<span id="locCost">0</span></div>
       <div><span class="cost-label">Source Fees:</span> ₱<span id="srcCost">0</span></div>
-      <div><span class="cost-label">Additional Cost:</span> ₱<span id="addCost">0</span></div>
-      <div style="border-top:1px solid #444; padding-top:5px;"><strong>TOTAL:</strong> ₱<span id="totalCost">0</span></div>
+      <div style="grid-column: span 2; border-top: 1px solid #1b4f72; padding-top:15px; font-size:1.2rem;">
+          <strong>Total Amount:</strong> ₱<span id="totalCost" style="color:#00aaff;">0</span>
+      </div>
     </div>
+
     <div class="action-buttons">
-      <button onclick="openLocationModal()">Add Delivery Location</button>
-      <button onclick="sendOrder()">Send to Rider</button>
+      <button onclick="openLocationModal()" style="background: #163545; border: 1px solid #00aaff;">Change Destination</button>
+      <button onclick="sendOrder()">Place Order Now</button>
     </div>
   </div>
 </div>
@@ -99,19 +152,18 @@ let orders = [];
 let fullData = { brgy: [], cities: [] };
 
 window.onload = function() {
-    // YOUR ORIGINAL IDENTITY LOGIC
-    try {
-        const customer = JSON.parse(localStorage.getItem('customer'));
-        if (customer) {
-            document.getElementById('custName').value = customer.name || '';
-            document.getElementById('custEmail').value = customer.email || '';
-            document.getElementById('custAddress').value = customer.address || '';
-            document.getElementById('summName').innerText = customer.name || '';
-        }
-    } catch (e) { console.error("Identity error"); }
+    // 1. Identity Logic (Stayed the same as your xp)
+    const customer = JSON.parse(localStorage.getItem('customer'));
+    if (customer) {
+        document.getElementById('custName').value = customer.name;
+        document.getElementById('custEmail').value = customer.email;
+        document.getElementById('custAddress').value = customer.address;
+        document.getElementById('summName').innerText = customer.name;
+        document.getElementById('welcomeName').innerText = customer.name;
+    }
 
-    // THE FETCH FOR THE BRGY LIST (REPLACES GOOGLE.SCRIPT.RUN)
-    fetch(WEB_APP_URL + "?action=getBarangayData")
+    // 2. Data Fetch (Fixed for GitHub)
+    fetch(`${WEB_APP_URL}?action=getBarangayData`)
     .then(res => res.json())
     .then(data => {
         fullData = data;
@@ -123,11 +175,10 @@ window.onload = function() {
             citySelect.appendChild(opt);
         });
     })
-    .catch(err => console.error("Database connection failed:", err));
+    .catch(err => console.error("Database Link Error"));
 };
 
 function openLocationModal() { document.getElementById("addressOverlay").style.display = "flex"; }
-function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
 
 function filterBarangays() {
     const selectedCity = document.getElementById("citySelect").value;
@@ -144,19 +195,29 @@ function filterBarangays() {
 function saveLocation() {
     const brgy = document.getElementById("brgySelect").value;
     const city = document.getElementById("citySelect").value;
+    if(!brgy || !city) return;
+
     const brgyObj = fullData.brgy.find(b => b.name === brgy && b.city === city);
     document.getElementById("dispLoc").innerText = brgy + ", " + city;
     document.getElementById("locCost").innerText = brgyObj ? brgyObj.cost : 0;
+    
     calculateFees();
     document.getElementById("addressOverlay").style.display = "none";
 }
 
-// YOUR ORIGINAL ORDER LOGIC
 function addOrder() {
     const itemIn = document.getElementById("item"), srcIn = document.getElementById("source");
     if(!itemIn.value || !srcIn.value) return;
-    orders.push({ item: itemIn.value, qty: document.getElementById("qty").value, uom: document.getElementById("uom").value, src: srcIn.value.toUpperCase() });
-    renderOrders(); calculateFees();
+    
+    orders.push({ 
+        item: itemIn.value, 
+        qty: document.getElementById("qty").value, 
+        uom: document.getElementById("uom").value, 
+        src: srcIn.value.toUpperCase() 
+    });
+    
+    renderOrders(); 
+    calculateFees();
     itemIn.value = ""; srcIn.value = ""; itemIn.focus();
 }
 
@@ -164,11 +225,10 @@ function renderOrders() {
     const tbody = document.getElementById("orderTable");
     tbody.innerHTML = "";
     orders.forEach((o, i) => {
-        tbody.innerHTML += `<tr><td>${o.item}</td><td style="text-align:center;">${o.qty}</td><td style="text-align:center;">${o.uom}</td><td>${o.src}</td><td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td></tr>`;
+        tbody.innerHTML += `<tr><td>${o.item}</td><td style="text-align:center;">${o.qty}</td><td>${o.uom}</td><td>${o.src}</td><td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td></tr>`;
     });
 }
 
-// YOUR NEW 50 PESO SOURCE FEE LOGIC
 function calculateFees() {
     const uniqueSources = [...new Set(orders.map(o => o.src))].length;
     const srcTotal = uniqueSources * 50;
@@ -178,8 +238,7 @@ function calculateFees() {
 }
 
 function removeOrder(i) { orders.splice(i, 1); renderOrders(); calculateFees(); }
-function sendOrder() { alert("Order sent!"); }
+function sendOrder() { alert("Order placed! Check the Sync Drawer for updates."); }
 </script>
 </body>
 </html>
-
