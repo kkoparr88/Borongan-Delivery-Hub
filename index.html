@@ -4,407 +4,212 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Borongan Delivery Hub</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; overflow-y: auto; }
+.app { display: flex; min-height: 100vh; }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
+/* SIDEBAR STYLE */
+.sidebar { background-color: #0a1f2e; width: 320px; min-width: 320px; padding: 20px 25px; border-right: 2px solid #00aaff; }
+.sidebar h2 { font-size: 20px; margin-bottom: 12px; border-bottom: 2px solid #00aaff; padding-bottom: 5px; }
+.sidebar label { font-size: 14px; margin-top: 10px; display: block; }
+.sidebar input, .sidebar textarea, .sidebar select { width: 100%; padding: 8px 10px; margin-top: 5px; border-radius: 6px; border: none; background-color: #163545; color: #ddd; }
+.qty-row { display: flex; gap: 8px; }
+.qty-row input { width: 70px; text-align: center; }
+.sidebar button { margin-top: 15px; background: linear-gradient(90deg, #00aaff, #0077cc); border: none; color: white; font-size: 15px; font-weight: 600; padding: 12px 0; width: 100%; border-radius: 8px; cursor: pointer; }
+.logout { background: #aa3333; }
 
-body {
-  background: linear-gradient(135deg, #0d2a3a, #1b4f72);
-  color: #eee;
-  overflow-y: auto;
-}
+/* MAIN CONTENT */
+.main { flex: 1; padding: 30px; }
+.hero { background: linear-gradient(90deg, #0f354f, #16629d); padding: 30px; border-radius: 12px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
 
-/* ================= DESKTOP LAYOUT ================= */
-.app {
-  display: flex;
-  min-height: 100vh;
-}
-
-/* ================= SIDEBAR ================= */
-.sidebar {
-  background-color: #0a1f2e;
-  width: 320px;
-  min-width: 320px;
-  padding: 20px 25px;
-  border-right: 2px solid #00aaff;
-}
-
-.sidebar h2 {
-  font-size: 20px;
-  margin-bottom: 12px;
-  border-bottom: 2px solid #00aaff;
-  padding-bottom: 5px;
-}
-
-.sidebar label {
-  font-size: 14px;
-  margin-top: 10px;
-  display: block;
-}
-
-.sidebar input,
-.sidebar textarea,
-.sidebar select {
-  width: 100%;
-  padding: 8px 10px;
-  margin-top: 5px;
-  border-radius: 6px;
-  border: none;
-  background-color: #163545;
-  color: #ddd;
-}
-
-/* Quantity + UOM */
-.qty-row {
-  display: flex;
-  gap: 8px;
-}
-
-.qty-row input {
-  width: 70px;
-  text-align: center;
-}
-
-.qty-row select {
-  width: 90px;
-}
-
-.qty-row input[type="text"] {
-  flex: 1;
-}
-
-/* Buttons */
-.sidebar button {
-  margin-top: 15px;
-  background: linear-gradient(90deg, #00aaff, #0077cc);
-  border: none;
-  color: white;
-  font-size: 15px;
-  font-weight: 600;
-  padding: 12px 0;
-  width: 100%;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.logout {
-  background: #aa3333;
-}
-
-/* ================= MAIN ================= */
-.main {
-  flex: 1;
-  padding: 30px;
-}
-
-.hero {
-  background: linear-gradient(90deg, #0f354f, #16629d);
-  padding: 30px;
-  border-radius: 12px;
-  margin-bottom: 25px;
-}
-
-/* ================= TABLE ================= */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #0a1f2e;
-  border-radius: 8px;
-  table-layout: fixed;
-}
-
-col.col-item { width: 46%; }
-col.col-qty  { width: 8%; }
-col.col-uom  { width: 14%; }
-col.col-src  { width: 22%; }
+/* TABLE */
+table { width: 100%; border-collapse: collapse; background-color: #0a1f2e; border-radius: 8px; table-layout: fixed; }
+col.col-item { width: 40%; }
+col.col-qty  { width: 10%; }
+col.col-uom  { width: 15%; }
+col.col-src  { width: 25%; }
 col.col-del  { width: 10%; }
+th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle; text-align: left; }
+.col-qty, .col-uom, .col-del { text-align: center; }
+.del-btn { background: none; border: none; color: #ff4d4d; font-size: 20px; cursor: pointer; }
 
-th, td {
-  padding: 14px;
-  border-bottom: 1px solid #004d87;
-  vertical-align: top;
-}
+/* INFO FRAME GRID */
+.info-frame { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; padding: 20px; background-color: #0a1f2e; border-radius: 8px; border-left: 4px solid #00aaff; }
+.cost-label { color: #00aaff; font-weight: bold; }
 
-th {
-  background-color: #003a65;
-}
+/* ADDRESS MODAL */
+#addressOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
+.address-card { background: #0a1f2e; padding: 30px; border-radius: 15px; border: 2px solid #00aaff; width: 350px; text-align: center; }
+.address-card select { width: 100%; padding: 12px; margin: 10px 0; background: #163545; border: 1px solid #00aaff; color: white; border-radius: 8px; }
 
-td {
-  word-wrap: break-word;
-}
+/* SLIDING DRAWER (Restored Plugin) */
+.drawer { position: fixed; right: -450px; top: 0; width: 400px; height: 100%; background: #0a1f2e; transition: 0.5s ease-in-out; z-index: 3000; padding: 25px; border-left: 3px solid #00aaff; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
+.drawer.active { right: 0; }
+.notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; position: relative; }
+.badge { display: none; position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: white; font-size: 12px; padding: 2px 6px; border-radius: 50%; }
 
-.col-qty,
-.col-uom,
-.col-del {
-  text-align: center;
-}
-
-.del-btn {
-  background: none;
-  border: none;
-  color: #ff4d4d;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-/* ================= CUSTOMER SUMMARY (MAIN) ================= */
-.info-frame {
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0;
-  padding: 15px;
-  background-color: #0a1f2e;
-  border-radius: 8px;
-}
-
-/* ================= ACTION BUTTONS ================= */
-.action-buttons {
-  display: flex;
-  gap: 15px;
-}
-
-.action-buttons button {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #00aaff, #0077cc);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* ================= MOBILE ================= */
-@media (max-width: 768px) {
-  .app {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    min-width: 100%;
-    border-right: none;
-    border-bottom: 2px solid #00aaff;
-  }
-
-  .main {
-    width: 100%;
-  }
-
-  .sidebar,
-  .main {
-    overflow: visible;
-  }
-}
+.action-buttons { display: flex; gap: 15px; }
+.action-buttons button { flex: 1; padding: 14px; border: none; border-radius: 8px; background: linear-gradient(90deg, #00aaff, #0077cc); color: white; font-weight: bold; cursor: pointer; }
 </style>
 </head>
 
 <body>
 
-<div class="app">
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-
-    <!-- CUSTOMER DETAILS -->
-    <h2>Customer Details</h2>
-
-    <label>Name</label>
-    <input id="custName" value="Kiko" disabled>
-
-    <label>Email</label>
-    <input id="custEmail" value="jedrichparr88@gmail.com" disabled>
-
-    <label>Address</label>
-    <textarea id="custAddress" disabled>Barangay E Borongan City</textarea>
-
-    <!-- ORDER DETAILS -->
-    <h2 style="margin-top:25px;">Order Details</h2>
-
-    <label>Item</label>
-    <textarea id="item"></textarea>
-
-    <label>Quantity</label>
-    <div class="qty-row">
-      <input type="number" id="qty" min="1" value="1">
-      <select id="uom" onchange="handleUomChange()">
-        <option value="pcs" selected>pcs</option>
-        <option value="order">order</option>
-        <option value="kg">kg</option>
-        <option value="ltr">ltr</option>
-        <option value="others">others</option>
-      </select>
-      <input id="uomOther" type="text" placeholder="specify" style="display:none">
+<div id="addressOverlay">
+    <div class="address-card animate__animated animate__zoomIn">
+        <h3 style="color:#00aaff; margin-bottom:15px;">Set Delivery Address</h3>
+        <label style="font-size:12px; display:block; text-align:left;">City/Municipality</label>
+        <select id="citySelect" onchange="filterBarangays()"><option>Loading Cities...</option></select>
+        <label style="font-size:12px; display:block; text-align:left; margin-top:10px;">Barangay</label>
+        <select id="brgySelect"><option>Select City First...</option></select>
+        <button onclick="saveLocation()" style="width:100%; padding:12px; background:#00aaff; color:white; border:none; border-radius:8px; margin-top:20px; font-weight:bold; cursor:pointer;">Confirm Location</button>
     </div>
+</div>
 
-    <label>Source</label>
-    <input id="source">
+<div id="sideDrawer" class="drawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #00aaff; padding-bottom:10px;">
+        <h3>Order Sync & Notifications</h3>
+        <button onclick="toggleDrawer()" style="background:none; border:none; color:white; font-size:28px; cursor:pointer;">&times;</button>
+    </div>
+    <div id="drawerContent" style="margin-top:20px;">
+        <p style="font-size:13px; color:#aaa;">Rider messages and live updates will appear here.</p>
+        <div id="riderMsgBox" style="margin-top:15px; padding:10px; background:#163545; border-left:4px solid #ff8c00; display:none;">
+            <strong>Rider Note:</strong> <span id="riderNoteText"></span>
+        </div>
+    </div>
+    <button onclick="resendOrder()" style="margin-top:30px; width:100%; padding:15px; background:linear-gradient(90deg, #ff8c00, #e67e22); border:none; border-radius:8px; color:white; font-weight:bold; cursor:pointer;">Resend Updated Order</button>
+</div>
 
+<div class="app">
+  <div class="sidebar">
+    <h2>Customer Details</h2>
+    <label>Name</label><input id="custName" value="Kiko" disabled>
+    <label>Email</label><input id="custEmail" value="jedrichparr88@gmail.com" disabled>
+    <label>Address</label><textarea id="custAddress" disabled>Set address to see rates...</textarea>
+    
+    <h2 style="margin-top:25px;">Order Details</h2>
+    <label>Item</label><textarea id="item"></textarea>
+    <label>Quantity</label>
+    <div class="qty-row"><input type="number" id="qty" min="1" value="1"><select id="uom"><option value="pcs">pcs</option><option value="kg">kg</option><option value="ltr">ltr</option></select></div>
+    <label>Source</label><input id="source">
     <button onclick="addOrder()">Add Order</button>
     <button class="logout" onclick="logout()">Logout</button>
   </div>
 
-  <!-- MAIN -->
   <div class="main">
-
     <div class="hero">
-      <h1>Borongan Delivery Hub 🚚</h1>
-      <p>Customer Dashboard</p>
+      <div><h1>Borongan Delivery Hub 🚚</h1><p>Customer Dashboard</p></div>
+      <div class="notif-btn" onclick="toggleDrawer()">
+          🔔 <span class="badge" id="notifBadge">0</span>
+      </div>
     </div>
 
     <table>
-      <colgroup>
-        <col class="col-item">
-        <col class="col-qty">
-        <col class="col-uom">
-        <col class="col-src">
-        <col class="col-del">
-      </colgroup>
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Qty</th>
-          <th>UoM</th>
-          <th>Source</th>
-          <th></th>
-        </tr>
-      </thead>
+      <thead><tr><th>Item</th><th class="col-qty">Qty</th><th class="col-uom">UoM</th><th>Source</th><th></th></tr></thead>
       <tbody id="orderTable"></tbody>
     </table>
 
-    <!-- CUSTOMER SUMMARY -->
     <div class="info-frame">
       <div><strong>Customer:</strong> Kiko</div>
-      <div><strong>Address:</strong> Barangay E Borongan City</div>
+      <div><strong>Delivery Location:</strong> <span id="dispLoc" style="color:#00aaff; font-weight:bold;">NOT SET</span></div>
+      <div><span class="cost-label">Location Cost:</span> ₱<span id="locCost">0</span></div>
+      <div><span class="cost-label">Source Fees (₱50/store):</span> ₱<span id="srcCost">0</span></div>
+      <div><span class="cost-label">Additional Cost:</span> ₱<span id="addCost">0</span></div>
+      <div style="border-top:1px solid #444; padding-top:5px;"><strong>TOTAL TO PAY:</strong> ₱<span id="totalCost">0</span></div>
     </div>
 
-    <!-- ACTION BUTTONS -->
     <div class="action-buttons">
-      <button onclick="confirmOrder()">Confirm</button>
+      <button onclick="openLocationModal()">Add Delivery Location</button>
       <button onclick="sendOrder()">Send to Rider</button>
     </div>
-
   </div>
 </div>
 
 <script>
 let orders = [];
+let fullData = { brgy: [], cities: [] };
 
-function handleUomChange() {
-  const u = document.getElementById("uom");
-  const o = document.getElementById("uomOther");
-  if (u.value === "others") {
-    o.style.display = "block";
-    o.focus();
-  } else {
-    o.style.display = "none";
-    o.value = "";
-  }
+window.onload = function() {
+    if (typeof google !== 'undefined') {
+        google.script.run.withSuccessHandler(function(data) {
+            fullData = data;
+            const cityDropdown = document.getElementById("citySelect");
+            cityDropdown.innerHTML = '<option value="" disabled selected>Select City</option>';
+            data.cities.forEach(city => {
+                let opt = document.createElement("option");
+                opt.value = city; opt.innerText = city;
+                cityDropdown.appendChild(opt);
+            });
+        }).getBarangayData();
+    }
+};
+
+function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
+function openLocationModal() { document.getElementById("addressOverlay").style.display = "flex"; }
+
+function filterBarangays() {
+    const selectedCity = document.getElementById("citySelect").value;
+    const brgyDropdown = document.getElementById("brgySelect");
+    brgyDropdown.innerHTML = ""; 
+    const filtered = fullData.brgy.filter(b => b.city === selectedCity);
+    filtered.forEach(b => {
+        let opt = document.createElement("option");
+        opt.value = b.name; opt.innerText = b.name;
+        brgyDropdown.appendChild(opt);
+    });
+}
+
+function saveLocation() {
+    const brgy = document.getElementById("brgySelect").value;
+    const city = document.getElementById("citySelect").value;
+    const brgyObj = fullData.brgy.find(b => b.name === brgy && b.city === city);
+    document.getElementById("dispLoc").innerText = brgy + ", " + city;
+    document.getElementById("custAddress").value = brgy + ", " + city;
+    document.getElementById("locCost").innerText = brgyObj ? brgyObj.cost : 0;
+    calculateFees();
+    document.getElementById("addressOverlay").style.display = "none";
 }
 
 function addOrder() {
-  const item = document.getElementById("item").value.trim();
-  const qty = document.getElementById("qty").value;
-  const src = document.getElementById("source").value.trim();
-  let uom = document.getElementById("uom").value;
-  const other = document.getElementById("uomOther").value.trim();
-
-  if (!item || !qty || !src) {
-    alert("Fill all fields");
-    return;
-  }
-
-  if (uom === "others") {
-    if (!other) {
-      alert("Specify unit of measure");
-      document.getElementById("uomOther").focus();
-      return;
-    }
-    uom = other;
-  }
-
-  orders.push({ item, qty, uom, src });
-  renderOrders();
-
-  document.getElementById("item").value = "";
-  document.getElementById("qty").value = 1;
-  document.getElementById("uom").value = "pcs";
-  document.getElementById("uomOther").value = "";
-  document.getElementById("uomOther").style.display = "none";
-  document.getElementById("source").value = "";
-  document.getElementById("item").focus();
+    const itemIn = document.getElementById("item"), srcIn = document.getElementById("source");
+    if(!itemIn.value || !srcIn.value) return;
+    orders.push({ item: itemIn.value, qty: document.getElementById("qty").value, uom: document.getElementById("uom").value, src: srcIn.value.toUpperCase() });
+    renderOrders(); calculateFees();
+    itemIn.value = ""; srcIn.value = ""; itemIn.focus();
 }
 
 function renderOrders() {
-  const tbody = document.getElementById("orderTable");
-  tbody.innerHTML = "";
-  orders.forEach((o, i) => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${o.item}</td>
-        <td class="col-qty">${o.qty}</td>
-        <td class="col-uom">${o.uom}</td>
-        <td>${o.src}</td>
-        <td class="col-del">
-          <button class="del-btn" onclick="removeOrder(${i})">✖</button>
-        </td>
-      </tr>`;
-  });
+    const tbody = document.getElementById("orderTable");
+    tbody.innerHTML = "";
+    orders.forEach((o, i) => {
+        tbody.innerHTML += `<tr><td>${o.item}</td><td class="col-qty">${o.qty}</td><td class="col-uom">${o.uom}</td><td>${o.src}</td><td class="col-del"><button class="del-btn" onclick="removeOrder(${i})">✖</button></td></tr>`;
+    });
 }
 
-function removeOrder(i) {
-  orders.splice(i, 1);
-  renderOrders();
-  document.getElementById("item").focus();
+function calculateFees() {
+    const uniqueSources = [...new Set(orders.map(o => o.src))].length;
+    const srcTotal = uniqueSources * 50;
+    const locTotal = parseInt(document.getElementById("locCost").innerText) || 0;
+    document.getElementById("srcCost").innerText = srcTotal;
+    document.getElementById("totalCost").innerText = srcTotal + locTotal;
 }
 
-function confirmOrder() {
-  alert("Order confirmed!");
-}
-
-function sendOrder() {
-  alert("Order sent to rider!");
-}
-
-function logout() {
-  localStorage.clear();
-  window.location.replace("login.html");
-}
-
-/* ================= FIX: Populate Customer Info from localStorage ================ */
-window.addEventListener('DOMContentLoaded', () => {
-  try {
-    const customer = JSON.parse(localStorage.getItem('customer'));
-    if (customer) {
-      // Update sidebar fields
-      const nameInput = document.getElementById('custName');
-      const emailInput = document.getElementById('custEmail');
-      const addressInput = document.getElementById('custAddress');
-
-      if (nameInput) nameInput.value = customer.name || '';
-      if (emailInput) emailInput.value = customer.email || '';
-      if (addressInput) addressInput.value = customer.address || '';
-
-      // Update summary frame
-      const infoFrame = document.querySelector('.info-frame');
-      if (infoFrame) {
-        const divs = infoFrame.querySelectorAll('div');
-        if (divs[0]) divs[0].innerHTML = `<strong>Customer:</strong> ${customer.name || ''}`;
-        if (divs[1]) divs[1].innerHTML = `<strong>Address:</strong> ${customer.address || ''}`;
-      }
+function resendOrder() {
+    if (orders.length === 0) { alert("List is empty!"); return; }
+    if (confirm("Replace your current order items?")) {
+        // Logic to trigger the 'Delete and Replace' backend function
+        alert("Syncing with Rider Hub...");
+        toggleDrawer();
     }
-  } catch (err) {
-    console.error('Error loading customer info:', err);
-  }
-});
-</script>
+}
 
+function removeOrder(i) { orders.splice(i, 1); renderOrders(); calculateFees(); }
+function sendOrder() { alert("Sending Order to Rider Hub..."); }
+function logout() { window.location.replace("login.html"); }
+</script>
 </body>
 </html>
