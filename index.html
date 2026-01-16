@@ -205,9 +205,8 @@ const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyru01ycKnnMpS41lmr
 
 let orders = [], fullData = { brgy: [], cities: [] };
 
-// --- CONNECTION BRIDGE ---
+// 1. THE RECEIVER (Handles the data when it arrives)
 function setupLocations(res) {
-    console.log("Bridge connected. Data received.");
     if (res.success) {
         fullData = res;
         const citySelect = document.getElementById("citySelect");
@@ -216,11 +215,27 @@ function setupLocations(res) {
             let opt = document.createElement("option"); opt.value = c; opt.innerText = c;
             citySelect.appendChild(opt);
         });
+        console.log("Data loaded successfully!");
+    } else {
+        alert("Error from Google: " + res.message);
+    }
+}
+
+// 2. THE TRIGGER (Runs when you click 'Set Destination')
+function openLocationModal() {
+    document.getElementById("addressOverlay").style.display = "flex";
+    const citySelect = document.getElementById("citySelect");
+    
+    // Only fetch if we haven't loaded the data yet
+    if (fullData.cities.length === 0) {
+        citySelect.innerHTML = '<option>Connecting to Database...</option>';
+        const script = document.createElement('script');
+        script.src = `${WEB_APP_URL}?action=getBarangayData&callback=setupLocations`;
+        document.body.appendChild(script);
     }
 }
 
 window.onload = function() {
-    // Identity Load
     const customer = JSON.parse(localStorage.getItem('customer'));
     if (customer) {
         document.getElementById('custName').value = customer.name;
@@ -229,13 +244,9 @@ window.onload = function() {
         document.getElementById('summName').innerText = customer.name;
         document.getElementById('welcomeName').innerText = customer.name;
     }
-    // Inject Script for JSONP (Matches your working Login style)
-    const script = document.createElement('script');
-    script.src = `${WEB_APP_URL}?action=getBarangayData&callback=setupLocations`;
-    document.body.appendChild(script);
 };
 
-// --- UI LOGIC ---
+// 3. UI & CALCULATION LOGIC (Preserved Exactly)
 function handleUomChange() {
     const uom = document.getElementById("uom").value;
     document.getElementById("uomOther").style.display = (uom === "others") ? "block" : "none";
@@ -289,10 +300,10 @@ function calculateFees() {
 }
 
 function removeOrder(i) { orders.splice(i, 1); renderOrders(); calculateFees(); }
-function openLocationModal() { document.getElementById("addressOverlay").style.display = "flex"; }
 function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
 function logout() { localStorage.clear(); window.location.replace('login.html'); }
 function sendOrder() { alert("Sending to Rider Hub..."); }
 </script>
 </body>
 </html>
+
