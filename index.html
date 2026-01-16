@@ -12,7 +12,7 @@
 body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; overflow-y: auto; }
 .app { display: flex; min-height: 100vh; }
 
-/* SIDEBAR STYLE */
+/* SIDEBAR */
 .sidebar { background-color: #0a1f2e; width: 320px; min-width: 320px; padding: 20px 25px; border-right: 2px solid #00aaff; }
 .sidebar h2 { font-size: 20px; margin-bottom: 12px; border-bottom: 2px solid #00aaff; padding-bottom: 5px; }
 .sidebar label { font-size: 14px; margin-top: 10px; display: block; }
@@ -46,11 +46,10 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
 .address-card { background: #0a1f2e; padding: 30px; border-radius: 15px; border: 2px solid #00aaff; width: 350px; text-align: center; }
 .address-card select { width: 100%; padding: 12px; margin: 10px 0; background: #163545; border: 1px solid #00aaff; color: white; border-radius: 8px; }
 
-/* SLIDING DRAWER (Restored Plugin) */
-.drawer { position: fixed; right: -450px; top: 0; width: 400px; height: 100%; background: #0a1f2e; transition: 0.5s ease-in-out; z-index: 3000; padding: 25px; border-left: 3px solid #00aaff; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
+/* DRAWER */
+.drawer { position: fixed; right: -450px; top: 0; width: 400px; height: 100%; background: #0a1f2e; transition: 0.5s; z-index: 3000; padding: 25px; border-left: 3px solid #00aaff; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
 .drawer.active { right: 0; }
-.notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; position: relative; }
-.badge { display: none; position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: white; font-size: 12px; padding: 2px 6px; border-radius: 50%; }
+.notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; }
 
 .action-buttons { display: flex; gap: 15px; }
 .action-buttons button { flex: 1; padding: 14px; border: none; border-radius: 8px; background: linear-gradient(90deg, #00aaff, #0077cc); color: white; font-weight: bold; cursor: pointer; }
@@ -63,7 +62,7 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
     <div class="address-card animate__animated animate__zoomIn">
         <h3 style="color:#00aaff; margin-bottom:15px;">Set Delivery Address</h3>
         <label style="font-size:12px; display:block; text-align:left;">City/Municipality</label>
-        <select id="citySelect" onchange="filterBarangays()"><option>Loading Cities...</option></select>
+        <select id="citySelect" onchange="filterBarangays()"><option>Loading...</option></select>
         <label style="font-size:12px; display:block; text-align:left; margin-top:10px;">Barangay</label>
         <select id="brgySelect"><option>Select City First...</option></select>
         <button onclick="saveLocation()" style="width:100%; padding:12px; background:#00aaff; color:white; border:none; border-radius:8px; margin-top:20px; font-weight:bold; cursor:pointer;">Confirm Location</button>
@@ -72,24 +71,18 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
 
 <div id="sideDrawer" class="drawer">
     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #00aaff; padding-bottom:10px;">
-        <h3>Order Sync & Notifications</h3>
-        <button onclick="toggleDrawer()" style="background:none; border:none; color:white; font-size:28px; cursor:pointer;">&times;</button>
+        <h3>Order Sync</h3>
+        <button onclick="toggleDrawer()" style="background:none; border:none; color:white; font-size:28px;">&times;</button>
     </div>
-    <div id="drawerContent" style="margin-top:20px;">
-        <p style="font-size:13px; color:#aaa;">Rider messages and live updates will appear here.</p>
-        <div id="riderMsgBox" style="margin-top:15px; padding:10px; background:#163545; border-left:4px solid #ff8c00; display:none;">
-            <strong>Rider Note:</strong> <span id="riderNoteText"></span>
-        </div>
-    </div>
-    <button onclick="resendOrder()" style="margin-top:30px; width:100%; padding:15px; background:linear-gradient(90deg, #ff8c00, #e67e22); border:none; border-radius:8px; color:white; font-weight:bold; cursor:pointer;">Resend Updated Order</button>
+    <div id="drawerContent" style="margin-top:20px;"><p>No new updates.</p></div>
 </div>
 
 <div class="app">
   <div class="sidebar">
     <h2>Customer Details</h2>
-    <label>Name</label><input id="custName" value="Kiko" disabled>
-    <label>Email</label><input id="custEmail" value="jedrichparr88@gmail.com" disabled>
-    <label>Address</label><textarea id="custAddress" disabled>Set address to see rates...</textarea>
+    <label>Name</label><input id="custName" disabled>
+    <label>Email</label><input id="custEmail" disabled>
+    <label>Home Address</label><textarea id="custAddress" disabled></textarea>
     
     <h2 style="margin-top:25px;">Order Details</h2>
     <label>Item</label><textarea id="item"></textarea>
@@ -103,9 +96,7 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
   <div class="main">
     <div class="hero">
       <div><h1>Borongan Delivery Hub 🚚</h1><p>Customer Dashboard</p></div>
-      <div class="notif-btn" onclick="toggleDrawer()">
-          🔔 <span class="badge" id="notifBadge">0</span>
-      </div>
+      <div class="notif-btn" onclick="toggleDrawer()">🔔</div>
     </div>
 
     <table>
@@ -114,12 +105,12 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
     </table>
 
     <div class="info-frame">
-      <div><strong>Customer:</strong> Kiko</div>
+      <div><strong>Customer:</strong> <span id="summaryCustName"></span></div>
       <div><strong>Delivery Location:</strong> <span id="dispLoc" style="color:#00aaff; font-weight:bold;">NOT SET</span></div>
       <div><span class="cost-label">Location Cost:</span> ₱<span id="locCost">0</span></div>
-      <div><span class="cost-label">Source Fees (₱50/store):</span> ₱<span id="srcCost">0</span></div>
+      <div><span class="cost-label">Source Fees:</span> ₱<span id="srcCost">0</span></div>
       <div><span class="cost-label">Additional Cost:</span> ₱<span id="addCost">0</span></div>
-      <div style="border-top:1px solid #444; padding-top:5px;"><strong>TOTAL TO PAY:</strong> ₱<span id="totalCost">0</span></div>
+      <div style="border-top:1px solid #444; padding-top:5px;"><strong>TOTAL:</strong> ₱<span id="totalCost">0</span></div>
     </div>
 
     <div class="action-buttons">
@@ -133,7 +124,18 @@ th, td { padding: 14px; border-bottom: 1px solid #004d87; vertical-align: middle
 let orders = [];
 let fullData = { brgy: [], cities: [] };
 
+// AUTO-LOAD: Identity from localStorage + Locations from Google
 window.onload = function() {
+    try {
+        const customer = JSON.parse(localStorage.getItem('customer'));
+        if (customer) {
+            document.getElementById('custName').value = customer.name || '';
+            document.getElementById('custEmail').value = customer.email || '';
+            document.getElementById('custAddress').value = customer.address || '';
+            document.getElementById('summaryCustName').innerText = customer.name || '';
+        }
+    } catch (e) { console.error("Identity load failed"); }
+
     if (typeof google !== 'undefined') {
         google.script.run.withSuccessHandler(function(data) {
             fullData = data;
@@ -148,8 +150,8 @@ window.onload = function() {
     }
 };
 
-function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
 function openLocationModal() { document.getElementById("addressOverlay").style.display = "flex"; }
+function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
 
 function filterBarangays() {
     const selectedCity = document.getElementById("citySelect").value;
@@ -167,9 +169,11 @@ function saveLocation() {
     const brgy = document.getElementById("brgySelect").value;
     const city = document.getElementById("citySelect").value;
     const brgyObj = fullData.brgy.find(b => b.name === brgy && b.city === city);
+    
+    // Updates ONLY the Delivery Display, not the Sidebar Home Address
     document.getElementById("dispLoc").innerText = brgy + ", " + city;
-    document.getElementById("custAddress").value = brgy + ", " + city;
     document.getElementById("locCost").innerText = brgyObj ? brgyObj.cost : 0;
+    
     calculateFees();
     document.getElementById("addressOverlay").style.display = "none";
 }
@@ -186,7 +190,7 @@ function renderOrders() {
     const tbody = document.getElementById("orderTable");
     tbody.innerHTML = "";
     orders.forEach((o, i) => {
-        tbody.innerHTML += `<tr><td>${o.item}</td><td class="col-qty">${o.qty}</td><td class="col-uom">${o.uom}</td><td>${o.src}</td><td class="col-del"><button class="del-btn" onclick="removeOrder(${i})">✖</button></td></tr>`;
+        tbody.innerHTML += `<tr><td>${o.item}</td><td class="col-qty">${o.qty}</td><td class="col-uom">${o.uom}</td><td>${o.src}</td><td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td></tr>`;
     });
 }
 
@@ -198,18 +202,9 @@ function calculateFees() {
     document.getElementById("totalCost").innerText = srcTotal + locTotal;
 }
 
-function resendOrder() {
-    if (orders.length === 0) { alert("List is empty!"); return; }
-    if (confirm("Replace your current order items?")) {
-        // Logic to trigger the 'Delete and Replace' backend function
-        alert("Syncing with Rider Hub...");
-        toggleDrawer();
-    }
-}
-
 function removeOrder(i) { orders.splice(i, 1); renderOrders(); calculateFees(); }
-function sendOrder() { alert("Sending Order to Rider Hub..."); }
-function logout() { window.location.replace("login.html"); }
+function logout() { localStorage.clear(); window.location.replace("login.html"); }
+function sendOrder() { alert("Sending Order..."); }
 </script>
 </body>
 </html>
