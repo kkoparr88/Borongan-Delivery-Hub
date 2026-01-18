@@ -49,7 +49,7 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-h
   transition: all 0.3s ease;
 }
 
-/* SPECIFIC STYLE FOR DROPDOWNS ONLY (Adds the Arrow) */
+/* SPECIFIC STYLE FOR DROPDOWNS ONLY */
 .sidebar select, .address-card select {
   appearance: none; 
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2300aaff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
@@ -64,7 +64,6 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-h
   background-color: #1c445a;
 }
 
-/* FIX: Ensure the Item Textarea is adjustable/resizable */
 #item { resize: vertical; min-height: 80px; }
 
 .qty-row { display: flex; gap: 10px; }
@@ -85,7 +84,6 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-h
 
 .sidebar button:hover { opacity: 0.9; transform: translateY(-2px); }
 
-/* --- MAIN CONTENT & TABLE --- */
 .main { flex: 1; padding: 40px; }
 
 .hero { 
@@ -104,7 +102,6 @@ th { background: #163545; padding: 15px; color: #00aaff; text-align: left; }
 td { padding: 15px; border-bottom: 1px solid #1b4f72; }
 .del-btn { color: #ff4d4d; background: none; border: none; cursor: pointer; font-size: 18px; }
 
-/* --- SUMMARY & DRAWER --- */
 .info-frame { 
   background: rgba(0, 170, 255, 0.05); 
   padding: 25px; 
@@ -121,7 +118,6 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
 .drawer.active { right: 0; }
 .notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; color: #00aaff; }
 
-/* --- POPUP (LOCATION PLUGIN) --- */
 #addressOverlay { 
   display: none; 
   position: fixed; 
@@ -143,7 +139,6 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
 }
 .action-buttons { display: flex; gap: 20px; }
 
-/* Dropdown Option Styling */
 select option {
   background: #0a1f2e;
   color: #fff;
@@ -151,23 +146,19 @@ select option {
 </style>
 </head>
 
-  
-<body>
+  <body>
 
 <div id="addressOverlay">
     <div class="address-card animate__animated animate__fadeInDown">
         <h3 style="text-align:center; color:#fff; margin-bottom:20px;">🚚 Delivery Destination</h3>
-        
         <label style="color:#00aaff; font-size:12px;">City / Municipality</label>
         <select id="citySelect" onchange="filterBarangays()">
             <option value="" disabled selected>Select City</option>
         </select>
-        
         <label style="color:#00aaff; font-size:12px;">Select Barangay</label>
         <select id="brgySelect">
             <option value="" disabled selected>Select City First</option>
         </select>
-        
         <button onclick="saveLocation()" style="width:100%; padding:15px; background:#00aaff; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; margin-top:20px;">Confirm Location</button>
     </div>
 </div>
@@ -204,6 +195,10 @@ select option {
         <input id="uomOther" type="text" placeholder="Specify unit..." style="display:none; margin-top:8px;">
         
         <label>Source Store</label><input id="source" placeholder="Store name...">
+
+        <label>Additional Fee (₱)</label>
+        <input type="number" id="extraFeeInput" value="0" oninput="calculateFees()" placeholder="0">
+
         <button onclick="addOrder()">Add to List</button>
         <button onclick="logout()" style="background:#441111; margin-top:10px;">Logout</button>
     </div>
@@ -235,54 +230,47 @@ select option {
             <div>Deliver To: <strong id="dispLoc" style="color:#00aaff;">NOT SET</strong></div>
             <div>Location Fee: ₱<span id="locCost">0</span></div>
             <div>Handling Fee: ₱<span id="srcCost">0</span></div>
+            <div>Additional Fee: ₱<span id="extraCostDisp">0</span></div>
             <div class="total-row">Estimated Total: ₱<span id="totalCost">0</span></div>
         </div>
 
         <div class="action-buttons">
             <button onclick="openLocationModal()" style="background:#163545; color:white; padding:15px; border-radius:8px; flex:1; cursor:pointer; border: 1px solid #00aaff;">📍 Set Destination</button>
-            <button onclick="sendOrder()" style="background:#00aaff; color:white; padding:15px; border-radius:8px; flex:1; border:none; font-weight:bold; cursor:pointer;">🚀 Send to Rider</button>
+            <button id="sendBtn" onclick="sendOrder()" style="background:#00aaff; color:white; padding:15px; border-radius:8px; flex:1; border:none; font-weight:bold; cursor:pointer;">🚀 Send to Rider</button>
         </div>
     </div>
 </div>
 
-<script>
+    <script>
 // ---------- MASTER CONFIGURATION ----------
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyru01ycKnnMpS41lmrvz6v-s_VgJo6MxM93BznvlwqKCDFaVopyzPIp0ysNbzLprOe/exec"; 
+// ADD YOUR RIDERS DB SCRIPT URL HERE
+const RIDER_DB_URL = "YOUR_RIDERS_DB_SCRIPT_URL";
 
 let orders = [], fullData = { brgy: [], cities: [] };
 
-// 1. DATA RECEIVER (A=Brgy, B=City, C=Cost)
 function setupLocations(res) {
     if (res.success) {
         fullData = res;
         const citySelect = document.getElementById("citySelect");
         citySelect.innerHTML = '<option value="" disabled selected>Choose City</option>';
-        
-        // Populate Unique Cities from Column B
         res.cities.forEach(c => {
             let opt = document.createElement("option"); 
-            opt.value = c; 
-            opt.innerText = c;
+            opt.value = c; opt.innerText = c;
             citySelect.appendChild(opt);
         });
-    } else {
-        alert("Database Error: " + res.message);
     }
 }
 
-// 2. TRIGGER ON CLICK (Fetches data when Modal opens)
 function openLocationModal() {
     document.getElementById("addressOverlay").style.display = "flex";
-    
     if (fullData.cities.length === 0) {
-        document.getElementById("citySelect").innerHTML = '<option>Connecting...</option>';
         const script = document.createElement('script');
         script.src = `${WEB_APP_URL}?action=getBarangayData&callback=setupLocations`;
         document.body.appendChild(script);
     }
 }
 
-// 3. PAGE INITIALIZATION
 window.onload = function() {
     const customer = JSON.parse(localStorage.getItem('customer'));
     if (customer) {
@@ -294,17 +282,13 @@ window.onload = function() {
     }
 };
 
-// 4. FILTER & SAVE LOGIC
 function filterBarangays() {
     const selectedCity = document.getElementById("citySelect").value;
     const brgySelect = document.getElementById("brgySelect");
     brgySelect.innerHTML = '<option value="" disabled selected>Choose Barangay</option>';
-    
-    // Filter Column A list using Column B selection
     fullData.brgy.filter(b => b.city === selectedCity).forEach(b => {
         let opt = document.createElement("option"); 
-        opt.value = b.name; 
-        opt.innerText = b.name;
+        opt.value = b.name; opt.innerText = b.name;
         brgySelect.appendChild(opt);
     });
 }
@@ -312,32 +296,20 @@ function filterBarangays() {
 function saveLocation() {
     const brgy = document.getElementById("brgySelect").value;
     const city = document.getElementById("citySelect").value;
-    if(!brgy || !city) return;
-    
     const brgyObj = fullData.brgy.find(b => b.name === brgy && b.city === city);
     document.getElementById("dispLoc").innerText = brgy + ", " + city;
     document.getElementById("locCost").innerText = brgyObj ? brgyObj.cost : 0;
-    
     calculateFees();
     document.getElementById("addressOverlay").style.display = "none";
 }
 
-// 5. ORDER & FEE LOGIC
 function addOrder() {
     const itemVal = document.getElementById("item").value;
     const srcVal = document.getElementById("source").value;
     if(!itemVal || !srcVal) return alert("Fill in Item and Source!");
-    
     let uom = document.getElementById("uom").value;
     if(uom === "others") uom = document.getElementById("uomOther").value;
-    
-    orders.push({ 
-        item: itemVal, 
-        qty: document.getElementById("qty").value, 
-        uom: uom, 
-        src: srcVal.toUpperCase() 
-    });
-    
+    orders.push({ item: itemVal, qty: document.getElementById("qty").value, uom: uom, src: srcVal.toUpperCase() });
     renderOrders(); 
     calculateFees();
     document.getElementById("item").value = ""; 
@@ -348,22 +320,49 @@ function renderOrders() {
     const tbody = document.getElementById("orderTable");
     tbody.innerHTML = "";
     orders.forEach((o, i) => {
-        tbody.innerHTML += `<tr>
-            <td>${o.item}</td>
-            <td>${o.qty}</td>
-            <td>${o.uom}</td>
-            <td>${o.src}</td>
-            <td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td>
-        </tr>`;
+        tbody.innerHTML += `<tr><td>${o.item}</td><td>${o.qty}</td><td>${o.uom}</td><td>${o.src}</td><td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td></tr>`;
     });
 }
 
+// UPDATED CALCULATE FEES (Including Plugin 1)
 function calculateFees() {
     const uniqueSources = [...new Set(orders.map(o => o.src))].length;
     const srcFee = uniqueSources * 50;
     const locFee = parseInt(document.getElementById("locCost").innerText) || 0;
+    const extraFee = parseInt(document.getElementById("extraFeeInput").value) || 0;
+    
     document.getElementById("srcCost").innerText = srcFee;
-    document.getElementById("totalCost").innerText = srcFee + locFee;
+    document.getElementById("extraCostDisp").innerText = extraFee;
+    document.getElementById("totalCost").innerText = srcFee + locFee + extraFee;
+}
+
+// PLUGIN 2: FAIR-LOAD BALANCING SEND ORDER
+function sendOrder() {
+    if(orders.length === 0) return alert("Add items first!");
+    if(document.getElementById("dispLoc").innerText === "NOT SET") return alert("Set destination first!");
+
+    document.getElementById("sendBtn").innerText = "Finding Best Rider...";
+    document.getElementById("sendBtn").disabled = true;
+
+    // Call the Rider Selection Script
+    const script = document.createElement('script');
+    script.src = `${RIDER_DB_URL}?action=findBestRider&callback=handleRiderResponse`;
+    document.body.appendChild(script);
+}
+
+function handleRiderResponse(res) {
+    if(res.success) {
+        alert("Success! Order sent to Rider: " + res.riderID);
+        // Reset App after success
+        orders = [];
+        renderOrders();
+        document.getElementById("sendBtn").innerText = "🚀 Send to Rider";
+        document.getElementById("sendBtn").disabled = false;
+    } else {
+        alert("Error: " + res.message);
+        document.getElementById("sendBtn").innerText = "🚀 Send to Rider";
+        document.getElementById("sendBtn").disabled = false;
+    }
 }
 
 function handleUomChange() {
@@ -374,9 +373,8 @@ function handleUomChange() {
 function removeOrder(i) { orders.splice(i, 1); renderOrders(); calculateFees(); }
 function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
 function logout() { localStorage.clear(); window.location.replace('login.html'); }
-function sendOrder() { alert("Sending Order to Rider Hub..."); }
 </script>
 </body>
 </html>
 
-
+    
