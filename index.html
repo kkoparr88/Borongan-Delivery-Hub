@@ -240,13 +240,13 @@ select option {
 
 
   
-    <script>
+<script>
 // ---------- MASTER CONFIGURATION ----------
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyru01ycKnnMpS41lmrvz6v-s_VgJo6MxM93BznvlwqKCDFaVopyzPIp0ysNbzLprOe/exec"; 
-// ADD YOUR RIDERS DB SCRIPT URL HERE
 const RIDER_DB_URL = "https://script.google.com/macros/s/AKfycbzHvgmLAioBVD5kTTBUt-JI2t097rmU_rx4LngDuedKspuuftz88c7EsqndSFAW6jFX/exec";
 
 let orders = [], fullData = { brgy: [], cities: [] };
+let currentAdditionalFee = 0; // Global variable to store fee from Rider Hub updates
 
 function setupLocations(res) {
     if (res.success) {
@@ -254,8 +254,7 @@ function setupLocations(res) {
         const citySelect = document.getElementById("citySelect");
         citySelect.innerHTML = '<option value="" disabled selected>Choose City</option>';
         res.cities.forEach(c => {
-            let opt = document.createElement("option"); 
-            opt.value = c; opt.innerText = c;
+            let opt = document.createElement("option"); opt.value = c; opt.innerText = c;
             citySelect.appendChild(opt);
         });
     }
@@ -286,8 +285,7 @@ function filterBarangays() {
     const brgySelect = document.getElementById("brgySelect");
     brgySelect.innerHTML = '<option value="" disabled selected>Choose Barangay</option>';
     fullData.brgy.filter(b => b.city === selectedCity).forEach(b => {
-        let opt = document.createElement("option"); 
-        opt.value = b.name; opt.innerText = b.name;
+        let opt = document.createElement("option"); opt.value = b.name; opt.innerText = b.name;
         brgySelect.appendChild(opt);
     });
 }
@@ -303,16 +301,30 @@ function saveLocation() {
 }
 
 function addOrder() {
-    const itemVal = document.getElementById("item").value;
-    const srcVal = document.getElementById("source").value;
-    if(!itemVal || !srcVal) return alert("Fill in Item and Source!");
+    const itemInput = document.getElementById("item");
+    const srcInput = document.getElementById("source");
+    const qtyInput = document.getElementById("qty");
+
+    if(!itemInput.value || !srcInput.value) return alert("Fill in Item and Source!");
+    
     let uom = document.getElementById("uom").value;
     if(uom === "others") uom = document.getElementById("uomOther").value;
-    orders.push({ item: itemVal, qty: document.getElementById("qty").value, uom: uom, src: srcVal.toUpperCase() });
+    
+    orders.push({ 
+        item: itemInput.value, 
+        qty: qtyInput.value, 
+        uom: uom, 
+        src: srcInput.value.toUpperCase() 
+    });
+    
     renderOrders(); 
     calculateFees();
-    document.getElementById("item").value = ""; 
-    document.getElementById("source").value = "";
+
+    // RESTORED: CLEAR TEXT & SET FOCUS
+    itemInput.value = ""; 
+    srcInput.value = "";
+    qtyInput.value = "1";
+    itemInput.focus(); 
 }
 
 function renderOrders() {
@@ -323,19 +335,17 @@ function renderOrders() {
     });
 }
 
-// UPDATED CALCULATE FEES (Including Plugin 1)
 function calculateFees() {
     const uniqueSources = [...new Set(orders.map(o => o.src))].length;
     const srcFee = uniqueSources * 50;
     const locFee = parseInt(document.getElementById("locCost").innerText) || 0;
-    const extraFee = parseInt(document.getElementById("extraFeeInput").value) || 0;
     
+    // SURGICAL FIX: Uses currentAdditionalFee variable instead of sidebar input
     document.getElementById("srcCost").innerText = srcFee;
-    document.getElementById("extraCostDisp").innerText = extraFee;
-    document.getElementById("totalCost").innerText = srcFee + locFee + extraFee;
+    document.getElementById("extraCostDisp").innerText = currentAdditionalFee;
+    document.getElementById("totalCost").innerText = srcFee + locFee + currentAdditionalFee;
 }
 
-// PLUGIN 2: FAIR-LOAD BALANCING SEND ORDER
 function sendOrder() {
     if(orders.length === 0) return alert("Add items first!");
     if(document.getElementById("dispLoc").innerText === "NOT SET") return alert("Set destination first!");
@@ -343,7 +353,6 @@ function sendOrder() {
     document.getElementById("sendBtn").innerText = "Finding Best Rider...";
     document.getElementById("sendBtn").disabled = true;
 
-    // Call the Rider Selection Script
     const script = document.createElement('script');
     script.src = `${RIDER_DB_URL}?action=findBestRider&callback=handleRiderResponse`;
     document.body.appendChild(script);
@@ -352,7 +361,6 @@ function sendOrder() {
 function handleRiderResponse(res) {
     if(res.success) {
         alert("Success! Order sent to Rider: " + res.riderID);
-        // Reset App after success
         orders = [];
         renderOrders();
         document.getElementById("sendBtn").innerText = "🚀 Send to Rider";
@@ -377,5 +385,6 @@ function logout() { localStorage.clear(); window.location.replace('login.html');
 </html>
 
     
+
 
 
