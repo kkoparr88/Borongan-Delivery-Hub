@@ -347,11 +347,15 @@ function sendOrder() {
     document.getElementById("sendBtn").innerText = "Finding Best Rider...";
     document.getElementById("sendBtn").disabled = true;
 
+    // Grab the CustomerID from the UI plugin we added earlier
+    const currentCustomerID = document.getElementById("displayID").innerText;
+
     const locFee = parseInt(document.getElementById("locCost").innerText) || 0;
     const srcFee = parseInt(document.getElementById("srcCost").innerText) || 0;
     const deliveryCost = locFee + srcFee;
 
     const payload = {
+        customerId: currentCustomerID, // Sending to Column 13
         customerName: document.getElementById("summName").innerText,
         deliveryTo: deliveryTo,
         items: orders, 
@@ -364,7 +368,7 @@ function sendOrder() {
     document.body.appendChild(script);
 }
 
-function handleRiderResponse(res) {
+      function handleRiderResponse(res) {
     if(res.success) {
         alert("Success! Order " + res.orderID + " sent to Rider: " + res.riderID);
         orders = [];
@@ -393,3 +397,4 @@ function logout() { localStorage.clear(); window.location.replace('login.html');
 
     
   
+
