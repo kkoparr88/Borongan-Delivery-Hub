@@ -8,33 +8,57 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
+/* --- MAIN THEME --- */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-height: 100vh; overflow-x: hidden; }
 
 .app { display: flex; min-height: 100vh; }
 
+/* --- SIDEBAR --- */
 .sidebar { 
   background-color: #0a1f2e; 
   width: 320px; 
   min-width: 320px; 
   padding: 25px; 
   border-right: 2px solid #00aaff; 
+  box-shadow: 5px 0 15px rgba(0,0,0,0.3); 
 }
 
-.sidebar h2 { font-size: 20px; margin-bottom: 15px; color: #00aaff; border-bottom: 2px solid #00aaff; padding-bottom: 5px; }
+.sidebar h2 { 
+  font-size: 20px; 
+  margin-bottom: 15px; 
+  color: #00aaff; 
+  border-bottom: 2px solid #00aaff; 
+  padding-bottom: 5px; 
+}
+
 .sidebar label { font-size: 13px; margin-top: 12px; display: block; color: #88ccee; }
 
-.sidebar input, .sidebar textarea, .sidebar select { 
+/* UPDATED UI FOR INPUTS AND DROPDOWNS */
+.sidebar input, .sidebar textarea, .sidebar select, .address-card select { 
   width: 100%; 
-  padding: 10px; 
-  margin-top: 5px; 
-  border-radius: 8px; 
+  padding: 12px; 
+  margin-top: 8px; 
+  margin-bottom: 5px;
+  border-radius: 10px; 
   border: 1px solid #1b4f72; 
   background: #163545; 
   color: #fff; 
   outline: none; 
+  font-size: 14px;
+  appearance: none; 
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2300aaff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 15px) center;
+  transition: all 0.3s ease;
 }
 
+.sidebar select:hover, .address-card select:hover {
+  border-color: #00aaff;
+  background-color: #1c445a;
+}
+
+/* FIX: Ensure the Item Textarea is adjustable/resizable */
 #item { resize: vertical; min-height: 80px; }
 
 .qty-row { display: flex; gap: 10px; }
@@ -50,8 +74,12 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-h
   border-radius: 8px; 
   font-weight: 600; 
   cursor: pointer; 
+  transition: 0.3s; 
 }
 
+.sidebar button:hover { opacity: 0.9; transform: translateY(-2px); }
+
+/* --- MAIN CONTENT & TABLE --- */
 .main { flex: 1; padding: 40px; }
 
 .hero { 
@@ -70,6 +98,7 @@ th { background: #163545; padding: 15px; color: #00aaff; text-align: left; }
 td { padding: 15px; border-bottom: 1px solid #1b4f72; }
 .del-btn { color: #ff4d4d; background: none; border: none; cursor: pointer; font-size: 18px; }
 
+/* --- SUMMARY & DRAWER --- */
 .info-frame { 
   background: rgba(0, 170, 255, 0.05); 
   padding: 25px; 
@@ -86,6 +115,7 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
 .drawer.active { right: 0; }
 .notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; color: #00aaff; }
 
+/* --- POPUP (LOCATION PLUGIN) --- */
 #addressOverlay { 
   display: none; 
   position: fixed; 
@@ -103,8 +133,15 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
   border-radius: 20px; 
   border: 2px solid #00aaff; 
   width: 400px; 
+  box-shadow: 0 0 30px rgba(0,170,255,0.3); 
 }
 .action-buttons { display: flex; gap: 20px; }
+
+/* Dropdown Option Styling */
+select option {
+  background: #0a1f2e;
+  color: #fff;
+}
 </style>
 </head>
 
@@ -334,3 +371,4 @@ function sendOrder() { alert("Sending Order to Rider Hub..."); }
 </script>
 </body>
 </html>
+
