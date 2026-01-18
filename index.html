@@ -146,7 +146,7 @@ select option {
 </style>
 </head>
 
-  <body>
+<body>
 
 <div id="addressOverlay">
     <div class="address-card animate__animated animate__fadeInDown">
@@ -196,9 +196,6 @@ select option {
         
         <label>Source Store</label><input id="source" placeholder="Store name...">
 
-        <label>Additional Fee (₱)</label>
-        <input type="number" id="extraFeeInput" value="0" oninput="calculateFees()" placeholder="0">
-
         <button onclick="addOrder()">Add to List</button>
         <button onclick="logout()" style="background:#441111; margin-top:10px;">Logout</button>
     </div>
@@ -241,6 +238,8 @@ select option {
     </div>
 </div>
 
+
+  
     <script>
 // ---------- MASTER CONFIGURATION ----------
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyru01ycKnnMpS41lmrvz6v-s_VgJo6MxM93BznvlwqKCDFaVopyzPIp0ysNbzLprOe/exec"; 
@@ -378,4 +377,5 @@ function logout() { localStorage.clear(); window.location.replace('login.html');
 </html>
 
     
+
 
