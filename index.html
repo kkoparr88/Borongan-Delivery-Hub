@@ -34,7 +34,6 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-h
 
 .sidebar label { font-size: 13px; margin-top: 12px; display: block; color: #88ccee; }
 
-/* SHARED STYLE FOR ALL INPUTS */
 .sidebar input, .sidebar textarea, .sidebar select, .address-card select { 
   width: 100%; 
   padding: 12px; 
@@ -49,7 +48,6 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-h
   transition: all 0.3s ease;
 }
 
-/* SPECIFIC STYLE FOR DROPDOWNS ONLY */
 .sidebar select, .address-card select {
   appearance: none; 
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2300aaff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
@@ -146,7 +144,7 @@ select option {
 </style>
 </head>
 
-<body>
+  <body>
 
 <div id="addressOverlay">
     <div class="address-card animate__animated animate__fadeInDown">
@@ -205,6 +203,7 @@ select option {
             <div>
                 <h1>Borongan Hub 🚚</h1>
                 <p>Welcome, <span id="welcomeName" style="color:#00aaff;">Guest</span></p>
+                <p style="font-size: 12px; color: #88ccee; margin-top: 2px;">ID: <span id="displayID">--</span></p>
             </div>
             <div class="notif-btn" onclick="toggleDrawer()">🔔</div>
         </div>
@@ -238,10 +237,7 @@ select option {
     </div>
 </div>
 
-
-  
-// ---------- MASTER CONFIGURATION ----------
-<script>
+    <script>
 // ---------- MASTER CONFIGURATION ----------
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyru01ycKnnMpS41lmrvz6v-s_VgJo6MxM93BznvlwqKCDFaVopyzPIp0ysNbzLprOe/exec"; 
 const RIDER_DB_URL = "https://script.google.com/macros/s/AKfycbzHvgmLAioBVD5kTTBUt-JI2t097rmU_rx4LngDuedKspuuftz88c7EsqndSFAW6jFX/exec";
@@ -278,6 +274,10 @@ window.onload = function() {
         document.getElementById('custAddress').value = customer.address;
         document.getElementById('summName').innerText = customer.name;
         document.getElementById('welcomeName').innerText = customer.name;
+        // NEW PLUGIN LOGIC: SETTING THE CUSTOMER ID
+        if(customer.id) {
+            document.getElementById('displayID').innerText = customer.id;
+        }
     }
 };
 
@@ -339,7 +339,6 @@ function calculateFees() {
     document.getElementById("totalCost").innerText = srcFee + locFee + currentAdditionalFee;
 }
 
-// SURGICAL UPDATE: sendOrder now packages MULTIPLE items for the backend
 function sendOrder() {
     if(orders.length === 0) return alert("Add items first!");
     const deliveryTo = document.getElementById("dispLoc").innerText;
@@ -348,7 +347,6 @@ function sendOrder() {
     document.getElementById("sendBtn").innerText = "Finding Best Rider...";
     document.getElementById("sendBtn").disabled = true;
 
-    // Calculate sum of fees for Column 9
     const locFee = parseInt(document.getElementById("locCost").innerText) || 0;
     const srcFee = parseInt(document.getElementById("srcCost").innerText) || 0;
     const deliveryCost = locFee + srcFee;
@@ -356,13 +354,12 @@ function sendOrder() {
     const payload = {
         customerName: document.getElementById("summName").innerText,
         deliveryTo: deliveryTo,
-        items: orders, // Sending the full array
+        items: orders, 
         deliveryCost: deliveryCost,
         extraFee: currentAdditionalFee
     };
 
     const script = document.createElement('script');
-    // Using encodeURIComponent to ensure special characters don't break the URL
     script.src = `${RIDER_DB_URL}?action=findBestRider&data=${encodeURIComponent(JSON.stringify(payload))}&callback=handleRiderResponse`;
     document.body.appendChild(script);
 }
@@ -390,13 +387,9 @@ function removeOrder(i) { orders.splice(i, 1); renderOrders(); calculateFees(); 
 function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
 function logout() { localStorage.clear(); window.location.replace('login.html'); }
 </script>
-  
+
 </body>
 </html>
 
     
-
-
-
-
-
+  
