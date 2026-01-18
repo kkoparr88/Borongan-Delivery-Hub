@@ -8,30 +8,20 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
-/* --- MAIN THEME --- */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-height: 100vh; overflow-x: hidden; }
 
 .app { display: flex; min-height: 100vh; }
 
-/* --- SIDEBAR --- */
 .sidebar { 
   background-color: #0a1f2e; 
   width: 320px; 
   min-width: 320px; 
   padding: 25px; 
   border-right: 2px solid #00aaff; 
-  box-shadow: 5px 0 15px rgba(0,0,0,0.3); 
 }
 
-.sidebar h2 { 
-  font-size: 20px; 
-  margin-bottom: 15px; 
-  color: #00aaff; 
-  border-bottom: 2px solid #00aaff; 
-  padding-bottom: 5px; 
-}
-
+.sidebar h2 { font-size: 20px; margin-bottom: 15px; color: #00aaff; border-bottom: 2px solid #00aaff; padding-bottom: 5px; }
 .sidebar label { font-size: 13px; margin-top: 12px; display: block; color: #88ccee; }
 
 .sidebar input, .sidebar textarea, .sidebar select { 
@@ -45,7 +35,6 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-h
   outline: none; 
 }
 
-/* FIX: Ensure the Item Textarea is adjustable/resizable */
 #item { resize: vertical; min-height: 80px; }
 
 .qty-row { display: flex; gap: 10px; }
@@ -61,12 +50,8 @@ body { background: linear-gradient(135deg, #0d2a3a, #1b4f72); color: #eee; min-h
   border-radius: 8px; 
   font-weight: 600; 
   cursor: pointer; 
-  transition: 0.3s; 
 }
 
-.sidebar button:hover { opacity: 0.9; transform: translateY(-2px); }
-
-/* --- MAIN CONTENT & TABLE --- */
 .main { flex: 1; padding: 40px; }
 
 .hero { 
@@ -85,7 +70,6 @@ th { background: #163545; padding: 15px; color: #00aaff; text-align: left; }
 td { padding: 15px; border-bottom: 1px solid #1b4f72; }
 .del-btn { color: #ff4d4d; background: none; border: none; cursor: pointer; font-size: 18px; }
 
-/* --- SUMMARY & DRAWER --- */
 .info-frame { 
   background: rgba(0, 170, 255, 0.05); 
   padding: 25px; 
@@ -102,7 +86,6 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
 .drawer.active { right: 0; }
 .notif-btn { cursor: pointer; font-size: 24px; border: 2px solid #00aaff; padding: 10px; border-radius: 50%; color: #00aaff; }
 
-/* --- POPUP --- */
 #addressOverlay { 
   display: none; 
   position: fixed; 
@@ -120,21 +103,28 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
   border-radius: 20px; 
   border: 2px solid #00aaff; 
   width: 400px; 
-  box-shadow: 0 0 30px rgba(0,170,255,0.3); 
 }
 .action-buttons { display: flex; gap: 20px; }
 </style>
 </head>
+
 <body>
 
 <div id="addressOverlay">
     <div class="address-card animate__animated animate__fadeInDown">
         <h3 style="text-align:center; color:#fff; margin-bottom:20px;">🚚 Delivery Destination</h3>
+        
         <label style="color:#00aaff; font-size:12px;">City / Municipality</label>
-        <select id="citySelect" onchange="filterBarangays()"><option>Loading Data...</option></select>
+        <select id="citySelect" onchange="filterBarangays()">
+            <option value="" disabled selected>Select City</option>
+        </select>
+        
         <label style="color:#00aaff; font-size:12px;">Select Barangay</label>
-        <select id="brgySelect"><option>Select City First</option></select>
-        <button onclick="saveLocation()" style="width:100%; padding:15px; background:#00aaff; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; margin-top:10px;">Confirm Location</button>
+        <select id="brgySelect">
+            <option value="" disabled selected>Select City First</option>
+        </select>
+        
+        <button onclick="saveLocation()" style="width:100%; padding:15px; background:#00aaff; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; margin-top:20px;">Confirm Location</button>
     </div>
 </div>
 
@@ -151,11 +141,11 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
         <h2>Customer</h2>
         <label>Full Name</label><input id="custName" disabled>
         <label>Email</label><input id="custEmail" disabled>
-        <label>Home Address</label><textarea id="custAddress" disabled rows="3" style="resize:none;"></textarea>
+        <label>Home Address</label><textarea id="custAddress" disabled rows="2" style="resize:none;"></textarea>
         
         <h2 style="margin-top:30px;">New Order</h2>
-        <label>Item Name (Adjustable)</label>
-        <textarea id="item" placeholder="Type items here... (drag corner to resize)"></textarea>
+        <label>Item Name (Resizable)</label>
+        <textarea id="item" placeholder="What are we buying today?"></textarea>
         
         <label>Quantity & Unit</label>
         <div class="qty-row">
@@ -176,12 +166,23 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
 
     <div class="main">
         <div class="hero">
-            <div><h1>Borongan Hub 🚚</h1><p>Welcome, <span id="welcomeName" style="color:#00aaff;">Guest</span></p></div>
+            <div>
+                <h1>Borongan Hub 🚚</h1>
+                <p>Welcome, <span id="welcomeName" style="color:#00aaff;">Guest</span></p>
+            </div>
             <div class="notif-btn" onclick="toggleDrawer()">🔔</div>
         </div>
 
         <table>
-            <thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Source</th><th>Action</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Item Description</th>
+                    <th style="width:80px;">Qty</th>
+                    <th style="width:100px;">Unit</th>
+                    <th>Source</th>
+                    <th style="width:50px;"></th>
+                </tr>
+            </thead>
             <tbody id="orderTable"></tbody>
         </table>
 
@@ -199,42 +200,45 @@ td { padding: 15px; border-bottom: 1px solid #1b4f72; }
         </div>
     </div>
 </div>
+
 <script>
-// !!! MASTER SCRIPT URL !!!
+// ---------- MASTER CONFIGURATION ----------
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyru01ycKnnMpS41lmrvz6v-s_VgJo6MxM93BznvlwqKCDFaVopyzPIp0ysNbzLprOe/exec"; 
 
 let orders = [], fullData = { brgy: [], cities: [] };
 
-// 1. THE RECEIVER (Handles the data when it arrives)
+// 1. DATA RECEIVER (A=Brgy, B=City, C=Cost)
 function setupLocations(res) {
     if (res.success) {
         fullData = res;
         const citySelect = document.getElementById("citySelect");
         citySelect.innerHTML = '<option value="" disabled selected>Choose City</option>';
+        
+        // Populate Unique Cities from Column B
         res.cities.forEach(c => {
-            let opt = document.createElement("option"); opt.value = c; opt.innerText = c;
+            let opt = document.createElement("option"); 
+            opt.value = c; 
+            opt.innerText = c;
             citySelect.appendChild(opt);
         });
-        console.log("Data loaded successfully!");
     } else {
-        alert("Error from Google: " + res.message);
+        alert("Database Error: " + res.message);
     }
 }
 
-// 2. THE TRIGGER (Runs when you click 'Set Destination')
+// 2. TRIGGER ON CLICK (Fetches data when Modal opens)
 function openLocationModal() {
     document.getElementById("addressOverlay").style.display = "flex";
-    const citySelect = document.getElementById("citySelect");
     
-    // Only fetch if we haven't loaded the data yet
     if (fullData.cities.length === 0) {
-        citySelect.innerHTML = '<option>Connecting to Database...</option>';
+        document.getElementById("citySelect").innerHTML = '<option>Connecting...</option>';
         const script = document.createElement('script');
         script.src = `${WEB_APP_URL}?action=getBarangayData&callback=setupLocations`;
         document.body.appendChild(script);
     }
 }
 
+// 3. PAGE INITIALIZATION
 window.onload = function() {
     const customer = JSON.parse(localStorage.getItem('customer'));
     if (customer) {
@@ -246,18 +250,17 @@ window.onload = function() {
     }
 };
 
-// 3. UI & CALCULATION LOGIC (Preserved Exactly)
-function handleUomChange() {
-    const uom = document.getElementById("uom").value;
-    document.getElementById("uomOther").style.display = (uom === "others") ? "block" : "none";
-}
-
+// 4. FILTER & SAVE LOGIC
 function filterBarangays() {
-    const city = document.getElementById("citySelect").value;
+    const selectedCity = document.getElementById("citySelect").value;
     const brgySelect = document.getElementById("brgySelect");
     brgySelect.innerHTML = '<option value="" disabled selected>Choose Barangay</option>';
-    fullData.brgy.filter(b => b.city === city).forEach(b => {
-        let opt = document.createElement("option"); opt.value = b.name; opt.innerText = b.name;
+    
+    // Filter Column A list using Column B selection
+    fullData.brgy.filter(b => b.city === selectedCity).forEach(b => {
+        let opt = document.createElement("option"); 
+        opt.value = b.name; 
+        opt.innerText = b.name;
         brgySelect.appendChild(opt);
     });
 }
@@ -266,28 +269,48 @@ function saveLocation() {
     const brgy = document.getElementById("brgySelect").value;
     const city = document.getElementById("citySelect").value;
     if(!brgy || !city) return;
+    
     const brgyObj = fullData.brgy.find(b => b.name === brgy && b.city === city);
     document.getElementById("dispLoc").innerText = brgy + ", " + city;
     document.getElementById("locCost").innerText = brgyObj ? brgyObj.cost : 0;
+    
     calculateFees();
     document.getElementById("addressOverlay").style.display = "none";
 }
 
+// 5. ORDER & FEE LOGIC
 function addOrder() {
-    const itemValue = document.getElementById("item").value, src = document.getElementById("source").value;
-    if(!itemValue || !src) return;
+    const itemVal = document.getElementById("item").value;
+    const srcVal = document.getElementById("source").value;
+    if(!itemVal || !srcVal) return alert("Fill in Item and Source!");
+    
     let uom = document.getElementById("uom").value;
     if(uom === "others") uom = document.getElementById("uomOther").value;
-    orders.push({ item: itemValue, qty: document.getElementById("qty").value, uom, src: src.toUpperCase() });
-    renderOrders(); calculateFees();
-    document.getElementById("item").value = ""; document.getElementById("source").value = "";
+    
+    orders.push({ 
+        item: itemVal, 
+        qty: document.getElementById("qty").value, 
+        uom: uom, 
+        src: srcVal.toUpperCase() 
+    });
+    
+    renderOrders(); 
+    calculateFees();
+    document.getElementById("item").value = ""; 
+    document.getElementById("source").value = "";
 }
 
 function renderOrders() {
     const tbody = document.getElementById("orderTable");
     tbody.innerHTML = "";
     orders.forEach((o, i) => {
-        tbody.innerHTML += `<tr><td>${o.item}</td><td>${o.qty}</td><td>${o.uom}</td><td>${o.src}</td><td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td></tr>`;
+        tbody.innerHTML += `<tr>
+            <td>${o.item}</td>
+            <td>${o.qty}</td>
+            <td>${o.uom}</td>
+            <td>${o.src}</td>
+            <td><button class="del-btn" onclick="removeOrder(${i})">✖</button></td>
+        </tr>`;
     });
 }
 
@@ -299,11 +322,15 @@ function calculateFees() {
     document.getElementById("totalCost").innerText = srcFee + locFee;
 }
 
+function handleUomChange() {
+    const uom = document.getElementById("uom").value;
+    document.getElementById("uomOther").style.display = (uom === "others") ? "block" : "none";
+}
+
 function removeOrder(i) { orders.splice(i, 1); renderOrders(); calculateFees(); }
 function toggleDrawer() { document.getElementById("sideDrawer").classList.toggle("active"); }
 function logout() { localStorage.clear(); window.location.replace('login.html'); }
-function sendOrder() { alert("Sending to Rider Hub..."); }
+function sendOrder() { alert("Sending Order to Rider Hub..."); }
 </script>
 </body>
 </html>
-
